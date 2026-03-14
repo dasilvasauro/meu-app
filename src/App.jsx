@@ -3,7 +3,7 @@ import {
   CheckCircle, Circle, Folder, Calendar, Trophy, User, Plus, X, 
   Bell, ChevronUp, ChevronDown, Target, Zap, Clock, Star, Flame, Sparkles,
   ArrowUp, ArrowDown, Minus, ShieldAlert, Award, ShoppingCart, Snowflake, Dices, Coins, Gift, Trash2, ListTodo, RefreshCw, Hourglass, Sword, Shield,
-  Swords, Egg, Heart, Utensils, Bath, Gamepad2, PackageOpen, Hammer, Sun, Moon
+  Swords, Egg, Heart, Utensils, Bath, Gamepad2, PackageOpen, Hammer, Sun, Moon, Ticket, Globe
 } from 'lucide-react';
 
 // --- ESTILOS GLOBAIS DE ANIMAÇÃO ---
@@ -24,24 +24,25 @@ const GlobalStyles = () => (
     .animate-float {
       animation: float 3s ease-in-out infinite;
     }
-    @keyframes epic-shake {
-      0%, 100% { transform: translate(0, 0) rotate(0deg); }
-      25% { transform: translate(4px, 4px) rotate(2deg); }
-      50% { transform: translate(-4px, -4px) rotate(-2deg); }
-      75% { transform: translate(-4px, 4px) rotate(2deg); }
+    @keyframes slot-spin {
+      0% { transform: translateY(-100%); opacity: 0; }
+      50% { transform: translateY(0); opacity: 1; }
+      100% { transform: translateY(100%); opacity: 0; }
     }
-    .animate-epic { animation: epic-shake 0.2s ease-in-out infinite; }
+    .animate-slot-spin {
+      animation: slot-spin 0.2s linear infinite;
+    }
     
     @keyframes card-glow {
       0% { box-shadow: 0 0 0 rgba(16, 185, 129, 0); }
-      50% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.6); border-color: rgba(16, 185, 129, 0.8); }
+      50% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); border-color: rgba(16, 185, 129, 0.6); }
       100% { box-shadow: 0 0 0 rgba(16, 185, 129, 0); } 
     }
     .animate-card-glow { animation: card-glow 1s ease-out forwards; }
     
     @keyframes pet-glow {
       0% { box-shadow: 0 0 0 rgba(234, 179, 8, 0); }
-      50% { box-shadow: 0 0 20px rgba(234, 179, 8, 0.6); border-color: rgba(234, 179, 8, 0.8); }
+      50% { box-shadow: 0 0 20px rgba(234, 179, 8, 0.4); border-color: rgba(234, 179, 8, 0.6); }
       100% { box-shadow: 0 0 0 rgba(234, 179, 8, 0); } 
     }
     .animate-pet-glow { animation: pet-glow 1.5s ease-out forwards; }
@@ -98,25 +99,19 @@ const GlobalStyles = () => (
     }
     .animate-flip-in { animation: flip-in 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
     
-    .gold-gradient { background-image: linear-gradient(90deg, #713f12, #facc15, #713f12); }
-    .silver-gradient { background-image: linear-gradient(90deg, #334155, #cbd5e1, #334155); }
-    .bronze-gradient { background-image: linear-gradient(90deg, #7c2d12, #f97316, #7c2d12); }
-    .fuchsia-gradient { background-image: linear-gradient(90deg, #4a044e, #d946ef, #4a044e); }
-    .blue-gradient { background-image: linear-gradient(90deg, #1e3a8a, #3b82f6, #1e3a8a); }
+    /* GRADIENTES SUAVIZADOS */
+    .gold-gradient { background: linear-gradient(90deg, rgba(113,63,18,0.2), rgba(250,204,21,0.15), rgba(113,63,18,0.2)); border-color: rgba(250,204,21,0.4); }
+    .silver-gradient { background: linear-gradient(90deg, rgba(51,65,85,0.2), rgba(203,213,225,0.15), rgba(51,65,85,0.2)); border-color: rgba(203,213,225,0.4); }
+    .bronze-gradient { background: linear-gradient(90deg, rgba(124,45,18,0.2), rgba(249,115,22,0.15), rgba(124,45,18,0.2)); border-color: rgba(249,115,22,0.4); }
+    .fuchsia-gradient { background: linear-gradient(90deg, rgba(74,4,78,0.3), rgba(217,70,239,0.2), rgba(74,4,78,0.3)); border-color: rgba(217,70,239,0.5); }
+    .blue-gradient { background: linear-gradient(90deg, rgba(30,58,138,0.3), rgba(59,130,246,0.2), rgba(30,58,138,0.3)); border-color: rgba(59,130,246,0.5); }
     
     .scrollbar-hide::-webkit-scrollbar { display: none; }
     .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
-    /* Força o calendário padrão a ficar oculto, pois temos o nosso */
     input[type="time"]::-webkit-calendar-picker-indicator,
     input[type="date"]::-webkit-calendar-picker-indicator {
-        opacity: 0;
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        top: 0;
-        left: 0;
-        cursor: pointer;
+        opacity: 0; width: 100%; height: 100%; position: absolute; top: 0; left: 0; cursor: pointer;
     }
   `}</style>
 );
@@ -165,21 +160,37 @@ const ParticlesBackground = ({ isDarkMode }) => {
 };
 
 const BOTS_NAMES = [
-  'Alex','Sam','Jordan','Taylor','Casey','Riley','Jamie','Morgan','Avery','Quinn','Lucas','Mia','Noah','Emma','Liam','Olivia',
-  'Ethan','Ava','Mason','Sophia','Logan','Isabella','Leo','Charlotte','Zoe','Levi','Amelia','Jack','Harper','Owen',
-  'Aria','Ryan','Evelyn','Nathan','Abigail','Caleb','Emily','Luke','Elizabeth','Isaac','Mila','Christian','Ella',
-  'Gabriel','Diana','Anthony','Chloe','Eli','Violet','Carter','Hazel','Dylan','Lily','Julian','Grace','Mateo','Bella',
-  'Jaxon','Aurora','Lincoln','Stella','Bruce','Nova','Arthur','Lana','Bruno','Maya','Rafael','Luna','Kai','Naomi',
-  'Diego','Elena','Carlos','Sara','Miguel','Julia','Luiz','Sofia','Pedro','Alice','Enzo','Laura','Theo','Valentina',
-  'João','Helena','Davi','Clara','Arthur','Cecília','Gael','Isis','Bernardo','Maria','Heitor','Yasmin','Ravi','Lívia'
+  'd0nk3y_war', 'florian_schneider', 'xX_slayer_Xx', 'neo_matrix', 'cyber_punk99',
+  'alpha_wolf', 'beta_tester', 'gamma_ray', 'delta_force', 'epsilon_star',
+  'zeta_reticuli', 'theta_prime', 'omega_supreme', 'shadow_hunter', 'light_bringer',
+  'dark_knight', 'white_wizard', 'black_panther', 'red_dragon', 'blue_falcon',
+  'green_lantern', 'yellow_flash', 'purple_haze', 'silver_surfer', 'gold_digger',
+  'crystal_meth', 'diamond_dog', 'ruby_rose', 'sapphire_sky', 'emerald_city',
+  'toxic_viper', 'venom_strike', 'blade_runner', 'ghost_face', 'iron_hide',
+  'crash_override', 'acid_burn', 'zero_cool', 'pixel_ghost', 'neon_rider',
+  'ninja_pro', 'samurai_jack', 'ronin_blade', 'shogun_assassin', 'yakuza_boss'
 ];
 
 const BOT_EMOJIS = ['🤓','😎','🤖','👻','👽','👾','🤡','🤠','🎃','😈','😺','🦊','🐯','🐸','🐼','🐱','🦁','🐼','🦊','🦄'];
+const BOT_PETS = ['bat', 'penguin', 'eagle', 'parrot', 'phoenix', 'dragon'];
+
+const calculateBotLevel = (totalXp) => {
+    let lvl = 1;
+    let xpLeft = totalXp;
+    while(xpLeft >= (500 + (lvl - 1) * 200)) {
+        xpLeft -= (500 + (lvl - 1) * 200);
+        lvl++;
+    }
+    return lvl;
+};
 
 const generateFakeUsers = (resetMonthly = false) => {
   const users = [];
   for (let i = 0; i < 99; i++) {
     const botMonthlyXp = resetMonthly ? 0 : Math.floor(Math.random() * 2000);
+    const totalXp = Math.floor(Math.random() * 80000) + 1000;
+    const lvl = calculateBotLevel(totalXp);
+    
     const botMedals = [];
     for(let j=0; j < 5; j++) {
        if (Math.random() > 0.6) {
@@ -191,13 +202,22 @@ const generateFakeUsers = (resetMonthly = false) => {
            botMedals.push(type);
        }
     }
+    
+    let pet = null;
+    if (lvl >= 10 && Math.random() > 0.4) {
+        pet = BOT_PETS[Math.floor(Math.random() * (lvl >= 30 ? 6 : 4))];
+    }
+
     users.push({
       id: `bot-${i}`, 
-      name: `${BOTS_NAMES[i % BOTS_NAMES.length]}`,
+      name: `${BOTS_NAMES[i % BOTS_NAMES.length]}${Math.floor(Math.random()*99)}`,
       emoji: BOT_EMOJIS[i % BOT_EMOJIS.length],
-      monthlyXp: botMonthlyXp, lastMonthlyXp: botMonthlyXp, isUser: false, consistency: Math.random(), grindFactor: Math.random(), 
+      monthlyXp: botMonthlyXp, lastMonthlyXp: botMonthlyXp, 
+      totalXp: totalXp, level: lvl,
+      isUser: false, consistency: Math.random(), grindFactor: Math.random(), 
       medals: botMedals,
-      activeBuffs: { realizador: Math.random() < 0.15, resguardo: Math.random() < 0.15 }
+      pet: pet,
+      activeBuffs: { realizador: Math.random() < 0.15, resguardo: Math.random() < 0.15, duelWin: false, duelLoss: false }
     });
   }
   return users;
@@ -238,12 +258,21 @@ const PET_TYPES = {
   dragon: { emoji: '🐉', name: 'Dragão Dourado' }
 };
 
+const SLOT_ITEMS = [
+   { icon: '💎', name: 'Diamante', pay: 3000, base: 5 },
+   { icon: '💰', name: 'Bolsa', pay: 1500, base: 10 },
+   { icon: '🪙', name: 'Moeda', pay: 500, base: 15 },
+   { icon: '🍎', name: 'Maçã', pay: 200, base: 30 },
+   { icon: '🍒', name: 'Cereja', pay: 50, base: 40 }
+];
+
 // --- APLICATIVO PRINCIPAL ---
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('tasks');
+  const [rankingView, setRankingView] = useState('ranking'); 
   
-  // --- INICIALIZAÇÃO DE ESTADOS COM LOCAL STORAGE ---
+  // --- INICIALIZAÇÃO DE ESTADOS ---
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const saved = localStorage.getItem('fq_theme');
     return saved !== null ? JSON.parse(saved) : true;
@@ -251,14 +280,24 @@ export default function App() {
 
   const [user, setUser] = useState(() => {
     const saved = localStorage.getItem('fq_user');
-    return saved ? JSON.parse(saved) : {
-      name: 'Você', level: 1, xp: 0, monthlyXp: 0, coins: 5000,
+    const parsed = saved ? JSON.parse(saved) : null;
+    if (parsed) {
+        if (!parsed.duelStats) parsed.duelStats = { wins: 0, losses: 0, ties: 0 };
+        if (parsed.vouchers === undefined) parsed.vouchers = 0;
+        if (parsed.petBuffBonus === undefined) parsed.petBuffBonus = 0;
+        if (!parsed.dailyTaskLimits) parsed.dailyTaskLimits = { p1: 0, p2: 0 };
+        return parsed;
+    }
+    return {
+      name: 'Você', level: 1, xp: 0, monthlyXp: 0, coins: 5000, vouchers: 5,
       lastMonthlyXp: 0, streak: 0, maxStreakThisMonth: 0, monthDaysElapsed: 0, isUser: true, medals: [],
-      activeBuffs: { realizador: false, resguardo: false, criticalUsedToday: false },
+      activeBuffs: { realizador: false, resguardo: false, criticalUsedToday: false, petBuffUsedToday: false, duelWin: false, duelLoss: false, lastGasp: false },
+      dailyTaskLimits: { p1: 0, p2: 0 },
       inventory: { food: 5, soap: 5, toys: 5 },
-      pet: null,
+      pet: null, petBuffBonus: 0,
       xpTowardsLootbox: 0,
-      dailyChallengedBots: {}
+      dailyChallengedBots: {},
+      duelStats: { wins: 0, losses: 0, ties: 0 }
     };
   });
 
@@ -270,6 +309,11 @@ export default function App() {
   const [bots, setBots] = useState(() => {
     const saved = localStorage.getItem('fq_bots');
     return saved ? JSON.parse(saved) : generateFakeUsers(true);
+  });
+
+  const [globalFeed, setGlobalFeed] = useState(() => {
+    const saved = localStorage.getItem('fq_feed');
+    return saved ? JSON.parse(saved) : [];
   });
 
   const [monthlyStats, setMonthlyStats] = useState(() => {
@@ -297,12 +341,29 @@ export default function App() {
   useEffect(() => { localStorage.setItem('fq_user', JSON.stringify(user)); }, [user]);
   useEffect(() => { localStorage.setItem('fq_date', currentDate.toISOString()); }, [currentDate]);
   useEffect(() => { localStorage.setItem('fq_bots', JSON.stringify(bots)); }, [bots]);
+  useEffect(() => { localStorage.setItem('fq_feed', JSON.stringify(globalFeed)); }, [globalFeed]);
   useEffect(() => { localStorage.setItem('fq_mstats', JSON.stringify(monthlyStats)); }, [monthlyStats]);
   useEffect(() => { localStorage.setItem('fq_folders', JSON.stringify(folders)); }, [folders]);
   useEffect(() => { localStorage.setItem('fq_tasks', JSON.stringify(tasks)); }, [tasks]);
   useEffect(() => { localStorage.setItem('fq_habits', JSON.stringify(habits)); }, [habits]);
 
-  // --- VARIÁVEIS DE TEMA (Suave Dark / Light Mode) ---
+  // --- CONTROLO DA MEIA-NOITE ---
+  const [realDate, setRealDate] = useState(new Date());
+  const [forceAdvanceModal, setForceAdvanceModal] = useState(false);
+  const [isProcessingDay, setIsProcessingDay] = useState(false);
+
+  useEffect(() => {
+     const intervalId = setInterval(() => {
+         const now = new Date();
+         if (now.getDate() !== realDate.getDate() || now.getMonth() !== realDate.getMonth()) {
+             setForceAdvanceModal(true);
+             setRealDate(now);
+         }
+     }, 60000); 
+     return () => clearInterval(intervalId);
+  }, [realDate]);
+
+  // --- VARIÁVEIS DE TEMA ---
   const theme = {
     bg: isDarkMode ? 'bg-zinc-900' : 'bg-zinc-50',
     panel: isDarkMode ? 'bg-zinc-800' : 'bg-white',
@@ -316,7 +377,7 @@ export default function App() {
     cardDone: isDarkMode ? 'bg-zinc-900 opacity-60 grayscale border-zinc-800' : 'bg-zinc-100 opacity-60 grayscale border-zinc-300'
   };
 
-  // Restantes estados temporários de Interface
+  // --- ESTADOS DE UI E MODAIS ---
   const [coinAnim, setCoinAnim] = useState(null);
   const prevCoinsRef = useRef(user.coins);
   
@@ -327,9 +388,10 @@ export default function App() {
   
   const [freezeModalOpen, setFreezeModalOpen] = useState(false);
   const [cronosModalOpen, setCronosModalOpen] = useState(null);
-  const [diceSlotActive, setDiceSlotActive] = useState(false);
-  const [slotDisplay, setSlotDisplay] = useState({ roll: 1, title: '' });
-  const [epicCritModal, setEpicCritModal] = useState(null); 
+  
+  const [slotModalOpen, setSlotModalOpen] = useState(false);
+  const [slotBet, setSlotBet] = useState(1);
+  const [slotState, setSlotState] = useState({ active: false, reels: ['❓','❓','❓'], result: null });
   
   const [pendingLootboxes, setPendingLootboxes] = useState(0);
   const [lootboxCardsModal, setLootboxCardsModal] = useState(false);
@@ -345,17 +407,21 @@ export default function App() {
   const [duelResultModal, setDuelResultModal] = useState(null);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
+  
+  const [itemToDelete, setItemToDelete] = useState(null);
 
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [calendarDate, setCalendarDate] = useState(new Date());
   const [showAllRanking, setShowAllRanking] = useState(false);
+  const [epicCritModal, setEpicCritModal] = useState(null);
 
   const [activeFolder, setActiveFolder] = useState('Todas');
   const [isAddingFolder, setIsAddingFolder] = useState(false);
   const [newFolderInput, setNewFolderInput] = useState('');
   
   const [newTaskText, setNewTaskText] = useState('');
+  const [newTaskDesc, setNewTaskDesc] = useState(''); 
   const [newTaskDeadline, setNewTaskDeadline] = useState('');
   const [newTaskTime, setNewTaskTime] = useState('');
   const [newTaskRecurring, setNewTaskRecurring] = useState([]); 
@@ -367,8 +433,12 @@ export default function App() {
   const [hasBonusTaskAvailable, setHasBonusTaskAvailable] = useState(false);
 
   const [newHabitText, setNewHabitText] = useState('');
+  const [newHabitDesc, setNewHabitDesc] = useState(''); 
   const [newHabitType, setNewHabitType] = useState('single');
   const [newHabitTarget, setNewHabitTarget] = useState(3);
+
+  const p1LimitReached = (user.dailyTaskLimits?.p1 || 0) >= 2;
+  const p2LimitReached = (user.dailyTaskLimits?.p2 || 0) >= 3;
 
   useEffect(() => {
     if (user.coins > prevCoinsRef.current) {
@@ -392,16 +462,14 @@ export default function App() {
 
   useEffect(() => {
     if (eggHatchModal && eggHatchModal.step === 'cracking') {
-       const timer = setTimeout(() => {
-          setEggHatchModal(prev => ({ ...prev, step: 'revealed' }));
-       }, 3500);
+       const timer = setTimeout(() => setEggHatchModal(prev => ({ ...prev, step: 'revealed' })), 3500);
        return () => clearTimeout(timer);
     }
   }, [eggHatchModal]);
 
+  // --- FUNÇÕES CORE ---
   const showToast = (msg) => { setToastMsg(msg); setTimeout(() => setToastMsg(''), 3500); };
   const addNotification = (msg) => setNotifications(prev => [{ id: Date.now(), msg, read: false }, ...prev]);
-
   const getRequiredXp = (lvl) => 500 + (lvl - 1) * 200;
 
   const addXpAndCoins = (xpAmount, coinAmount) => {
@@ -447,43 +515,65 @@ export default function App() {
 
   const addTask = () => {
     if (!newTaskText.trim()) return;
+    
+    if (newTaskTime && !newTaskDeadline) {
+        showToast("⚠️ Adicione uma data antes de definir o horário!");
+        return;
+    }
+    
+    let finalPriority = (isDailyChallenge || isBonusTask) ? 'P1' : newTaskPriority;
+    let p1Count = user.dailyTaskLimits?.p1 || 0;
+    let p2Count = user.dailyTaskLimits?.p2 || 0;
+    
+    if (!isDailyChallenge && !isBonusTask) {
+        if (finalPriority === 'P1') p1Count++;
+        if (finalPriority === 'P2') p2Count++;
+    }
+
     if (isDailyChallenge) setHasUsedDailyChallenge(true);
     if (isBonusTask) setHasBonusTaskAvailable(false);
 
     const folderToSave = activeFolder === 'Todas' ? (folders.length > 0 ? folders[0] : 'Geral') : activeFolder;
 
-    setTasks([...tasks, {
-      id: Date.now(), title: newTaskText, folder: folderToSave, completed: false,
+    setTasks([{
+      id: Date.now(), title: newTaskText, description: newTaskDesc, folder: folderToSave, completed: false,
       deadline: newTaskDeadline || null, deadlineTime: newTaskTime || null,
-      recurring: newTaskRecurring, priority: (isDailyChallenge || isBonusTask) ? 'P1' : newTaskPriority,
+      recurring: newTaskRecurring, priority: finalPriority,
       isDailyChallenge, isBonusTask, boost: 1, ageInDays: 0, glowAnimation: false, rewardToast: null
-    }]);
+    }, ...tasks]); 
     
-    setNewTaskText(''); setNewTaskDeadline(''); setNewTaskTime(''); setNewTaskRecurring([]); setNewTaskPriority('P4');
+    setUser(prev => ({...prev, dailyTaskLimits: { p1: p1Count, p2: p2Count }}));
+    showToast("✨ Tarefa forjada com sucesso!");
+
+    setNewTaskText(''); setNewTaskDesc(''); setNewTaskDeadline(''); setNewTaskTime(''); 
+    setNewTaskRecurring([]); setNewTaskPriority('P4');
     setIsDailyChallenge(false); setIsBonusTask(false);
   };
 
   const tryPetBuff = (baseXP, baseCoins, task) => {
      let multXp = 1; let multCoins = 1; let triggered = false; let petEmoji = ''; let extraMsg = '';
 
-     if (user.pet && user.pet.type !== 'egg' && !user.pet.isDead) {
+     if (user.pet && user.pet.type !== 'egg' && !user.pet.isDead && !user.activeBuffs.petBuffUsedToday) {
          const p = user.pet;
          const isHappy = p.food >= 60 && p.fun >= 60 && p.clean >= 60 && p.love >= 60;
-         if (isHappy && Math.random() < 0.15) {
+         
+         if (isHappy && Math.random() < 0.20) { 
              triggered = true;
              petEmoji = PET_TYPES[p.type].emoji;
+             setUser(prev => ({...prev, activeBuffs: {...prev.activeBuffs, petBuffUsedToday: true}}));
              
+             const bns = user.petBuffBonus || 0;
              switch(p.type) {
                  case 'bat': 
-                     multXp = 1.3 + Math.random() * 0.2; 
+                     multXp = 1.3 + bns + Math.random() * 0.2; 
                      extraMsg = "Chupão XP!"; 
                      break;
                  case 'dragon': 
-                     multCoins = 3; 
+                     multCoins = 3 + bns; 
                      extraMsg = "Ouro Triplicado!"; 
                      break;
                  case 'phoenix': 
-                     multXp = 2; multCoins = 2; 
+                     multXp = 2 + bns; multCoins = 2 + bns; 
                      extraMsg = "Chamas Críticas!"; 
                      break;
                  case 'parrot': 
@@ -505,10 +595,12 @@ export default function App() {
                      const unfrozen = habits.filter(h => !h.frozen && !h.completed);
                      if(unfrozen.length > 0) {
                          const target = unfrozen[Math.floor(Math.random() * unfrozen.length)];
-                         setHabits(cur => cur.map(h => h.id === target.id ? {...h, frozen: true} : h));
-                         extraMsg = "Hábito congelado!";
+                         setHabits(cur => cur.map(h => h.id === target.id ? {...h, frozen: true, completed: true} : h));
+                         processHabitCompletion(); 
+                         extraMsg = "Hábito congelado e concluído!";
                      } else {
                          triggered = false; 
+                         setUser(prev => ({...prev, activeBuffs: {...prev.activeBuffs, petBuffUsedToday: false}})); 
                      }
                      break;
              }
@@ -528,8 +620,12 @@ export default function App() {
           
           let buffMult = 1; let isCrit = false;
 
+          if (user.activeBuffs.lastGasp) buffMult *= 2;
+          if (user.activeBuffs.duelWin) buffMult *= 1.15;
+          if (user.activeBuffs.duelLoss) buffMult *= 0.85;
+
           if (user.activeBuffs.realizador) {
-             buffMult = 1.2;
+             buffMult *= 1.2;
              if (!user.activeBuffs.criticalUsedToday) {
                  let critChance = 0.1;
                  if (t.priority === 'P4' && !isSpecial) critChance = 0.4;
@@ -537,7 +633,7 @@ export default function App() {
                  else if (t.priority === 'P2') critChance = 0.2;
 
                  if (Math.random() < critChance) {
-                     buffMult = 1.5; isCrit = true;
+                     buffMult *= 1.5; isCrit = true;
                      setUser(prev => ({...prev, activeBuffs: {...prev.activeBuffs, criticalUsedToday: true}}));
                      setEpicCritModal({ type: 'crit', taskTitle: t.title });
                  }
@@ -586,8 +682,9 @@ export default function App() {
           let toastMsg = `+${finalXP} XP | +${finalCoins} Moedas`;
           if (petEffect.triggered) toastMsg = `${petEffect.petEmoji} ${petEffect.extraMsg} ` + toastMsg;
           else if (isCrit) toastMsg = `CRÍTICO! ${toastMsg}`;
+          else if (user.activeBuffs.lastGasp) toastMsg = `Último Gás! ${toastMsg}`;
           else if (user.activeBuffs.realizador) toastMsg = `Realizador! ${toastMsg}`;
-          if (isLate) toastMsg += ' (Metade - Atraso)';
+          if (isLate) toastMsg += ' (Atraso)';
 
           return { 
             ...t, completed: true, 
@@ -601,8 +698,41 @@ export default function App() {
     }));
   };
 
-  const deleteTask = (id) => setTasks(tasks.filter(t => t.id !== id));
-  const clearCompletedTasks = () => setTasks(tasks.filter(t => {
+  const handleDeleteClick = (id, type) => {
+     if (type === 'task') {
+         const t = tasks.find(x => x.id === id);
+         if (t && t.completed) {
+             deleteTask(id); 
+             return;
+         }
+     }
+     setItemToDelete({ id, type });
+  };
+
+  const confirmDelete = () => {
+     if (itemToDelete.type === 'task') {
+         const task = tasks.find(t => t.id === itemToDelete.id);
+         if (task) {
+             if (task.priority === 'P1' && !task.isDailyChallenge && !task.isBonusTask) {
+                 setUser(prev => ({...prev, dailyTaskLimits: { ...prev.dailyTaskLimits, p1: Math.max(0, (prev.dailyTaskLimits?.p1 || 0) - 1) }}));
+             } else if (task.priority === 'P2') {
+                 setUser(prev => ({...prev, dailyTaskLimits: { ...prev.dailyTaskLimits, p2: Math.max(0, (prev.dailyTaskLimits?.p2 || 0) - 1) }}));
+             }
+             addXpAndCoins(-30, -10);
+             setTasks(currentTasks => currentTasks.filter(t => t.id !== task.id));
+             showToast("Tarefa abandonada. Penalidade aplicada.");
+         }
+     } else {
+         addXpAndCoins(-30, -10);
+         setHabits(currentHabits => currentHabits.filter(h => h.id !== itemToDelete.id));
+         showToast("Hábito abandonado. Penalidade aplicada.");
+     }
+     setItemToDelete(null);
+  };
+
+  const deleteTask = (id) => setTasks(currentTasks => currentTasks.filter(t => t.id !== id));
+  
+  const clearCompletedTasks = () => setTasks(currentTasks => currentTasks.filter(t => {
       if (activeFolder === 'Todas') return !t.completed;
       if (t.folder === activeFolder) return !t.completed;
       return true;
@@ -633,14 +763,14 @@ export default function App() {
   const addHabit = () => {
     if (!newHabitText.trim() || habits.length >= 5) return;
     setHabits([...habits, {
-      id: Date.now(), title: newHabitText, type: newHabitType,
+      id: Date.now(), title: newHabitText, description: newHabitDesc, type: newHabitType,
       target: newHabitType === 'count' ? newHabitTarget : 1, current: 0, completed: false, streak: 0, frozen: false
     }]);
-    setNewHabitText('');
+    setNewHabitText(''); setNewHabitDesc('');
   };
 
   const incrementHabit = (id) => {
-    setHabits(habits.map(h => {
+    setHabits(currentHabits => currentHabits.map(h => {
       if (h.id === id && !h.completed && !h.frozen) {
         const nextCurrent = h.current + 1;
         const isCompleting = nextCurrent >= h.target;
@@ -651,14 +781,15 @@ export default function App() {
     }));
   };
 
-  const deleteHabit = (id) => setHabits(habits.filter(h => h.id !== id));
+  const deleteHabit = (id) => setHabits(currentHabits => currentHabits.filter(h => h.id !== id));
 
-  // Funções da LOJA
+  // --- LOJA LOGIC ---
   const handleBuyFreeze = (habitId) => {
     if (user.coins < 500) return showToast("Moedas insuficientes!");
     setUser(prev => ({ ...prev, coins: prev.coins - 500 }));
-    setHabits(habits.map(h => h.id === habitId ? { ...h, frozen: true } : h));
-    setFreezeModalOpen(false); showToast("Hábito congelado!");
+    setHabits(currentHabits => currentHabits.map(h => h.id === habitId ? { ...h, frozen: true, completed: true } : h));
+    processHabitCompletion(); 
+    setFreezeModalOpen(false); showToast("Hábito congelado e concluído!");
   };
 
   const handleBuyBonusTask = () => {
@@ -736,43 +867,69 @@ export default function App() {
      setCronosModalOpen(type);
   };
 
-  const handleBuyMagicDice = () => {
-    if (user.coins < 700) return showToast("Moedas insuficientes!");
-    const activeTasks = tasks.filter(t => !t.completed);
-    if (activeTasks.length === 0) return showToast("Sem tarefas ativas!");
+  const buyVoucherItem = (type) => {
+     if (type === 'petBuff') {
+         if (user.vouchers < 10) return showToast("Vouchers insuficientes!");
+         setUser(p => ({...p, vouchers: p.vouchers - 10, petBuffBonus: (p.petBuffBonus || 0) + 0.05}));
+         showToast("Buff permanente do Pet melhorado em 5%!");
+     } else if (type === 'lootbox') {
+         if (user.vouchers < 10) return showToast("Vouchers insuficientes!");
+         setUser(p => ({...p, vouchers: p.vouchers - 10}));
+         openLootbox();
+     } else if (type === 'lastGasp') {
+         if (user.vouchers < 15) return showToast("Vouchers insuficientes!");
+         if (user.activeBuffs.lastGasp) return showToast("Último Gás já está ativo!");
+         setUser(p => ({...p, vouchers: p.vouchers - 15, activeBuffs: {...p.activeBuffs, lastGasp: true}}));
+         showToast("Último Gás Ativado! XP/Moedas a dobrar hoje.");
+     }
+  };
 
-    setUser(prev => ({ ...prev, coins: prev.coins - 700 }));
-    const roll = Math.floor(Math.random() * 6) + 1;
-    let weightedTasks = [];
-    activeTasks.forEach(t => {
-      let weight = 10;
-      const isHighTier = t.isDailyChallenge || t.isBonusTask || t.priority === 'P1';
-      if (isHighTier) weight = Math.max(1, 12 - (roll * 2)); 
-      else if (t.priority === 'P2') weight = Math.max(3, 10 - roll);
-      else weight = 10 + roll;
-      for(let i=0; i<weight; i++) weightedTasks.push(t);
-    });
-    
-    const selectedTask = weightedTasks[Math.floor(Math.random() * weightedTasks.length)];
-    
-    setDiceSlotActive(true); let ticks = 0; const intervalTime = 60; 
-    const spinInterval = setInterval(() => {
-      setSlotDisplay({ roll: Math.floor(Math.random() * 6) + 1, title: activeTasks[Math.floor(Math.random() * activeTasks.length)].title });
-      ticks++;
-      if (ticks > 25) {
-        clearInterval(spinInterval); setSlotDisplay({ roll, title: selectedTask.title }); 
-        setTimeout(() => {
-          setDiceSlotActive(false);
-          setTasks(current => current.map(t => t.id === selectedTask.id ? { ...t, boost: roll } : t));
-          if (roll === 6 && (selectedTask.isDailyChallenge || selectedTask.isBonusTask || selectedTask.priority === 'P1')) {
-            setEpicCritModal({ type: 'dice', roll, taskTitle: selectedTask.title });
-          } else showToast(`🎲 Dado ${roll}! "${selectedTask.title}" x${roll}!`);
-        }, 1800);
+  const startSlotMachine = () => {
+      if (user.vouchers < slotBet) return showToast("Vouchers insuficientes!");
+      setUser(p => ({...p, vouchers: p.vouchers - slotBet}));
+      
+      setSlotModalOpen(true);
+      setSlotState({ active: true, reels: ['❓','❓','❓'], result: null });
+      
+      const winChance = 20 - (slotBet - 1) * 2; 
+      const isWin = Math.random() * 100 < winChance;
+      
+      let finalPrizeObj = null;
+      let finalReels = [];
+
+      if (isWin) {
+         const dChance = 5 + (slotBet - 1);
+         const bChance = 10 + (slotBet - 1);
+         const cChance = 15 + (slotBet - 1);
+         const aChance = 30 + (slotBet - 1);
+         
+         const r = Math.random() * 100;
+         if (r < dChance) finalPrizeObj = SLOT_ITEMS[0];
+         else if (r < dChance + bChance) finalPrizeObj = SLOT_ITEMS[1];
+         else if (r < dChance + bChance + cChance) finalPrizeObj = SLOT_ITEMS[2];
+         else if (r < dChance + bChance + cChance + aChance) finalPrizeObj = SLOT_ITEMS[3];
+         else finalPrizeObj = SLOT_ITEMS[4];
+
+         finalReels = [finalPrizeObj.icon, finalPrizeObj.icon, finalPrizeObj.icon];
+      } else {
+         const items = [...SLOT_ITEMS].sort(() => Math.random() - 0.5);
+         finalReels = [items[0].icon, items[0].icon, items[1].icon];
       }
-    }, intervalTime);
+
+      setTimeout(() => setSlotState(s => ({...s, reels: [finalReels[0], '❓', '❓']})), 1000);
+      setTimeout(() => setSlotState(s => ({...s, reels: [finalReels[0], finalReels[1], '❓']})), 2000);
+      setTimeout(() => {
+          setSlotState({ active: false, reels: finalReels, result: isWin ? finalPrizeObj : 'loss' });
+          if (isWin) {
+             const payout = finalPrizeObj.pay * slotBet;
+             addXpAndCoins(0, payout);
+             showToast(`🎉 Ganhou ${payout} Moedas!`);
+          }
+      }, 3500);
   };
 
   const openLootbox = () => {
+      if(pendingLootboxes <= 0) return;
       setPendingLootboxes(p => Math.max(0, p - 1));
       setSelectedLootboxCard(null); 
       
@@ -842,111 +999,186 @@ export default function App() {
      }, 4000); 
   };
 
-  const simulateNextDay = () => {
-    const nextDate = new Date(currentDate);
-    nextDate.setDate(nextDate.getDate() + 1);
-    setCurrentDate(nextDate);
+  const processNextDay = () => {
+    setForceAdvanceModal(false);
+    setIsProcessingDay(true);
 
-    const updatedBots = bots.map(bot => {
-      const dailyTasksCompleted = Math.floor(bot.consistency * 4) + Math.floor(Math.random() * 3);
-      const didDailyChallenge = Math.random() < bot.grindFactor;
-      let xpGained = (dailyTasksCompleted * 30) + (didDailyChallenge ? 150 : 0);
-      if (bot.activeBuffs?.realizador) xpGained = Math.floor(xpGained * 1.2);
-      
-      return { 
-         ...bot, lastMonthlyXp: bot.monthlyXp, monthlyXp: bot.monthlyXp + xpGained,
-         activeBuffs: { realizador: Math.random() < 0.15, resguardo: Math.random() < 0.15 }
-      };
-    });
-    setBots(updatedBots);
+    setTimeout(() => {
+        const nextDate = new Date(currentDate);
+        nextDate.setDate(nextDate.getDate() + 1);
+        setCurrentDate(nextDate);
+        
+        let newFeed = [];
 
-    if (activeDuel && activeDuel.accepted) {
-        const bot = updatedBots.find(b => b.id === activeDuel.botId);
-        const userDiff = user.monthlyXp - activeDuel.userDailyXpStart;
-        const botDiff = bot.monthlyXp - activeDuel.botDailyXpStart;
-        
-        const win = userDiff > botDiff;
-        const tie = userDiff === botDiff;
-        
-        if (win && !tie) addXpAndCoins(500, 200); 
-        setDuelResultModal({ botName: activeDuel.botName, botEmoji: activeDuel.botEmoji, win, tie, userDiff, botDiff });
-        setActiveDuel(null);
-    } else {
-        setActiveDuel(null); 
-    }
+        let newBots = bots.map(bot => {
+          const dailyTasksCompleted = Math.floor(bot.consistency * 4) + Math.floor(Math.random() * 3);
+          const didDailyChallenge = Math.random() < bot.grindFactor;
+          let xpGained = (dailyTasksCompleted * 30) + (didDailyChallenge ? 150 : 0);
+          
+          if (bot.activeBuffs?.realizador) xpGained = Math.floor(xpGained * 1.2);
+          if (bot.activeBuffs?.duelWin) xpGained = Math.floor(xpGained * 1.15);
+          if (bot.activeBuffs?.duelLoss) xpGained = Math.floor(xpGained * 0.85);
+          
+          const newTotalXp = (bot.totalXp || 0) + xpGained;
+          const newLevel = calculateBotLevel(newTotalXp);
 
-    let newGlobalStreak = user.streak;
-    let monthMaxStreak = user.maxStreakThisMonth;
-    
-    const unfrozenHabits = habits.filter(h => !h.frozen);
-    const allHabitsDone = unfrozenHabits.length > 0 && unfrozenHabits.every(h => h.completed);
-    
-    if (allHabitsDone) {
-      newGlobalStreak++;
-      if (newGlobalStreak > monthMaxStreak) monthMaxStreak = newGlobalStreak;
-    } else if (unfrozenHabits.length > 0) {
-      let penalty = Math.max(10, 80 - (newGlobalStreak * 5));
-      if (user.activeBuffs.resguardo) penalty = Math.floor(penalty * 0.6);
-      
-      let fenixSaved = false;
-      if (user.pet && user.pet.type === 'phoenix' && !user.pet.isDead && !user.phoenixUsedThisMonth) {
-         fenixSaved = true;
-         setUser(p => ({...p, phoenixUsedThisMonth: true}));
-         addNotification("🐦‍🔥 A Fênix ressuscitou a sua ofensiva das cinzas! Não a perdeu!");
-      } else {
-         addXpAndCoins(-penalty, 0); 
-         newGlobalStreak = 0;
-      }
-    }
+          let newPet = bot.pet;
+          if (!newPet && newLevel >= 10 && Math.random() < 0.05) {
+              newPet = BOT_PETS[Math.floor(Math.random() * (newLevel >= 30 ? 6 : 4))];
+              newFeed.push({ id: Math.random(), type: 'pet', text: `${bot.name} adotou um ${PET_TYPES[newPet].name}!`, icon: '🐾' });
+          } else if (newPet && Math.random() < 0.02) {
+              newFeed.push({ id: Math.random(), type: 'pet_death', text: `O pet de ${bot.name} fugiu para a floresta...`, icon: '🪦' });
+              newPet = null;
+          }
 
-    let updatedPet = user.pet;
-    if (updatedPet && updatedPet.type !== 'egg' && !updatedPet.isDead) {
-        let p = { ...updatedPet };
-        p.food = Math.max(0, p.food - 20);
-        p.fun = Math.max(0, p.fun - 20);
-        p.clean = Math.max(0, p.clean - 20);
-        p.love = Math.max(0, p.love - 20);
-        
-        let lowCount = 0;
-        if(p.food < 30) lowCount++; if(p.fun < 30) lowCount++; if(p.clean < 30) lowCount++; if(p.love < 30) lowCount++;
-        
-        if (lowCount >= 2) {
-            p.isDead = true;
-            addNotification(`🪦 O seu Pet ${PET_TYPES[p.type].name} morreu por falta de cuidados...`);
+          let botStreak = bot.streak || 0;
+          if (Math.random() > 0.2) botStreak++; else botStreak = 0;
+          if (botStreak === 7) newFeed.push({ id: Math.random(), type: 'streak', text: `${bot.name} atingiu uma ofensiva de Bronze!`, icon: '🔥' });
+          if (botStreak === 14) newFeed.push({ id: Math.random(), type: 'streak', text: `${bot.name} atingiu uma ofensiva de Prata!`, icon: '🔥' });
+          if (botStreak === 23) newFeed.push({ id: Math.random(), type: 'streak', text: `${bot.name} atingiu uma incrível ofensiva de Ouro!`, icon: '🔥' });
+
+          return { 
+             ...bot, lastMonthlyXp: bot.monthlyXp, monthlyXp: bot.monthlyXp + xpGained,
+             totalXp: newTotalXp, level: newLevel, pet: newPet, streak: botStreak,
+             activeBuffs: { realizador: Math.random() < 0.15, resguardo: Math.random() < 0.15, duelWin: false, duelLoss: false }
+          };
+        });
+
+        let botPool = [...newBots].sort(() => Math.random() - 0.5);
+        for(let i=0; i<6; i+=2) {
+           let b1 = botPool[i]; let b2 = botPool[i+1];
+           let xp1 = b1.monthlyXp - b1.lastMonthlyXp;
+           let xp2 = b2.monthlyXp - b2.lastMonthlyXp;
+           if (xp1 > xp2) {
+               b1.activeBuffs.duelWin = true; b2.activeBuffs.duelLoss = true;
+               newFeed.push({ id: Math.random(), type: 'duel', text: `${b1.name} massacrou ${b2.name} num duelo!`, icon: '⚔️' });
+           } else if (xp2 > xp1) {
+               b2.activeBuffs.duelWin = true; b1.activeBuffs.duelLoss = true;
+               newFeed.push({ id: Math.random(), type: 'duel', text: `${b2.name} massacrou ${b1.name} num duelo!`, icon: '⚔️' });
+           }
         }
-        updatedPet = p;
-    }
+        
+        const completedHabitsCount = habits.filter(h => h.completed).length;
+        let earnedVouchers = 0;
+        if (completedHabitsCount >= 3) {
+            earnedVouchers = 1;
+            newFeed.push({ id: Math.random(), type: 'voucher', text: `Você ganhou 1 Voucher por consistência impecável!`, icon: '🎟️' });
+        }
 
-    setUser(prev => ({ 
-      ...prev, streak: newGlobalStreak, maxStreakThisMonth: monthMaxStreak,
-      monthDaysElapsed: prev.monthDaysElapsed + 1, lastMonthlyXp: prev.monthlyXp,
-      activeBuffs: { realizador: false, resguardo: false, criticalUsedToday: false },
-      pet: updatedPet, dailyChallengedBots: {}
-    }));
+        let newGlobalStreak = user.streak;
+        let monthMaxStreak = user.maxStreakThisMonth;
+        const unfrozenHabits = habits.filter(h => !h.frozen);
+        const allHabitsDone = unfrozenHabits.length > 0 && unfrozenHabits.every(h => h.completed);
+        
+        if (allHabitsDone) {
+          newGlobalStreak++;
+          if (newGlobalStreak > monthMaxStreak) monthMaxStreak = newGlobalStreak;
+          if (newGlobalStreak === 7) newFeed.push({ id: Math.random(), type: 'streak', text: `Você atingiu uma ofensiva de Bronze!`, icon: '🔥' });
+          if (newGlobalStreak === 14) newFeed.push({ id: Math.random(), type: 'streak', text: `Você atingiu uma ofensiva de Prata!`, icon: '🔥' });
+          if (newGlobalStreak === 23) newFeed.push({ id: Math.random(), type: 'streak', text: `Você atingiu uma ofensiva de Ouro!`, icon: '🔥' });
+        } else if (unfrozenHabits.length > 0) {
+          let penalty = Math.max(50, 150 - (newGlobalStreak * 5)); 
+          if (user.activeBuffs.resguardo) penalty = Math.floor(penalty * 0.6);
+          
+          let fenixSaved = false;
+          if (user.pet && user.pet.type === 'phoenix' && !user.pet.isDead && !user.phoenixUsedThisMonth) {
+             fenixSaved = true;
+             setUser(p => ({...p, phoenixUsedThisMonth: true}));
+             addNotification("🐦‍🔥 A Fênix ressuscitou a sua ofensiva das cinzas!");
+          } else {
+             addXpAndCoins(-penalty, 0); 
+             newGlobalStreak = 0;
+          }
+        }
 
-    setHabits(habits.map(h => ({
-      ...h, streak: (h.completed || h.frozen) ? (h.frozen ? h.streak : h.streak + 1) : 0,
-      current: 0, completed: false, frozen: false 
-    })));
-    
-    setTasks(currentTasks => currentTasks.map(t => {
-      let updatedTask = { ...t };
-      if (t.recurring && t.recurring.includes(nextDate.getDay())) {
-         updatedTask = { ...updatedTask, completed: false, glowAnimation: false, rewardToast: null, isLate: false, isCrit: false, isPetBuff: false };
-      }
-      if (!t.deadline && (!t.recurring || t.recurring.length === 0) && !t.completed) {
-         updatedTask.ageInDays = (updatedTask.ageInDays || 0) + 1;
-      }
-      return updatedTask;
-    }));
+        let nextDayDuelWin = false;
+        let nextDayDuelLoss = false;
 
-    setHasUsedDailyChallenge(false);
+        if (activeDuel && activeDuel.accepted) {
+            const bot = newBots.find(b => b.id === activeDuel.botId);
+            const userDiff = user.monthlyXp - activeDuel.userDailyXpStart;
+            const botDiff = bot.monthlyXp - activeDuel.botDailyXpStart;
+            
+            const win = userDiff > botDiff;
+            const tie = userDiff === botDiff;
+            
+            if (win && !tie) {
+                addXpAndCoins(500, 200); 
+                setUser(prev => ({...prev, duelStats: { ...prev.duelStats, wins: (prev.duelStats?.wins || 0) + 1 }}));
+                nextDayDuelWin = true;
+                bot.activeBuffs.duelLoss = true;
+                newFeed.push({ id: Math.random(), type: 'duel', text: `Você aniquilou ${bot.name} num duelo!`, icon: '⚔️' });
+            } else if (tie) {
+                setUser(prev => ({...prev, duelStats: { ...prev.duelStats, ties: (prev.duelStats?.ties || 0) + 1 }}));
+            } else {
+                setUser(prev => ({...prev, duelStats: { ...prev.duelStats, losses: (prev.duelStats?.losses || 0) + 1 }}));
+                nextDayDuelLoss = true;
+                bot.activeBuffs.duelWin = true;
+                newFeed.push({ id: Math.random(), type: 'duel', text: `${bot.name} derrotou-o num duelo!`, icon: '⚔️' });
+            }
+            
+            setDuelResultModal({ botName: activeDuel.botName, botEmoji: activeDuel.botEmoji, win, tie, userDiff, botDiff });
+            setActiveDuel(null);
+        } else {
+            setActiveDuel(null); 
+        }
+        
+        setBots(newBots); 
 
-    if (!activeDuel || !activeDuel.accepted) setShowWelcome(true);
+        let updatedPet = user.pet;
+        if (updatedPet && updatedPet.type !== 'egg' && !updatedPet.isDead) {
+            let p = { ...updatedPet };
+            p.food = Math.max(0, p.food - 20);
+            p.fun = Math.max(0, p.fun - 20);
+            p.clean = Math.max(0, p.clean - 20);
+            p.love = Math.max(0, p.love - 20);
+            
+            let lowCount = 0;
+            if(p.food < 30) lowCount++; if(p.fun < 30) lowCount++; if(p.clean < 30) lowCount++; if(p.love < 30) lowCount++;
+            
+            if (lowCount >= 2) {
+                p.isDead = true;
+                addNotification(`🪦 O seu Pet ${PET_TYPES[p.type].name} morreu por falta de cuidados...`);
+                newFeed.push({ id: Math.random(), type: 'pet_death', text: `Infelizmente, o companheiro de Você não resistiu...`, icon: '🪦' });
+            }
+            updatedPet = p;
+        }
+
+        setGlobalFeed(prev => [...newFeed, ...prev].slice(0, 50));
+
+        setUser(prev => ({ 
+          ...prev, streak: newGlobalStreak, maxStreakThisMonth: monthMaxStreak, vouchers: (prev.vouchers || 0) + earnedVouchers,
+          monthDaysElapsed: prev.monthDaysElapsed + 1, lastMonthlyXp: prev.monthlyXp,
+          activeBuffs: { realizador: false, resguardo: false, criticalUsedToday: false, petBuffUsedToday: false, lastGasp: false, duelWin: nextDayDuelWin, duelLoss: nextDayDuelLoss },
+          dailyTaskLimits: { p1: 0, p2: 0 },
+          pet: updatedPet, dailyChallengedBots: {}
+        }));
+
+        setHabits(currentHabits => currentHabits.map(h => ({
+          ...h, streak: (h.completed || h.frozen) ? (h.frozen ? h.streak : h.streak + 1) : 0,
+          current: 0, completed: false, frozen: false 
+        })));
+        
+        setTasks(currentTasks => currentTasks.map(t => {
+          let updatedTask = { ...t };
+          if (t.recurring && t.recurring.includes(nextDate.getDay())) {
+             updatedTask = { ...updatedTask, completed: false, glowAnimation: false, rewardToast: null, isLate: false, isCrit: false, isPetBuff: false };
+          }
+          if (!t.deadline && (!t.recurring || t.recurring.length === 0) && !t.completed) {
+             updatedTask.ageInDays = (updatedTask.ageInDays || 0) + 1;
+          }
+          return updatedTask;
+        }));
+
+        setHasUsedDailyChallenge(false);
+        setIsProcessingDay(false);
+
+        if (!activeDuel || !activeDuel.accepted) setShowWelcome(true);
+
+    }, 2500); 
   };
 
   const simulateNextMonth = () => {
-    setShowMonthlyReset(true);
     let newMedal = null;
     const isPerfectMonth = user.maxStreakThisMonth >= 28;
     if (isPerfectMonth) newMedal = 'plat';
@@ -956,9 +1188,12 @@ export default function App() {
 
     if (newMedal) setUser(prev => ({ ...prev, medals: [...prev.medals, newMedal] }));
 
-    setTasks([]); setHabits([]);
+    setHabits(cur => cur.map(h => ({ ...h, streak: 0, current: 0, completed: false, frozen: false })));
+
     setUser(prev => ({ ...prev, maxStreakThisMonth: 0, monthDaysElapsed: 0, monthlyXp: 0, lastMonthlyXp: 0, phoenixUsedThisMonth: false, dailyChallengedBots: {} }));
-    setBots(generateFakeUsers(true)); 
+    setBots(cur => cur.map(b => ({ ...b, monthlyXp: 0, lastMonthlyXp: 0 })));
+    
+    setShowMonthlyReset(true); 
   };
 
   const rankingList = useMemo(() => {
@@ -976,13 +1211,13 @@ export default function App() {
       return { ...u, trend };
     });
   }, [bots, user]);
+  
   const userRankPosition = rankingList.findIndex(u => u.isUser) + 1;
 
   const handleHourSelect = (hStr) => { const mins = newTaskTime ? newTaskTime.split(':')[1] : '00'; setNewTaskTime(`${hStr}:${mins}`); };
   const handleMinuteSelect = (mStr) => { const hrs = newTaskTime ? newTaskTime.split(':')[0] : '12'; setNewTaskTime(`${hrs}:${mStr}`); };
 
-  // --- RENDERIZAÇÃO DAS ABAS E TEMAS ---
-
+  // --- RENDERIZAÇÃO DAS ABAS ---
   const renderTasks = () => (
     <div className="space-y-6 relative z-10 pb-24">
       <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide items-center">
@@ -1011,12 +1246,12 @@ export default function App() {
           Adicionar Tarefa
           <div className="flex gap-2">
             {!hasUsedDailyChallenge && (
-              <button onClick={() => { setIsDailyChallenge(!isDailyChallenge); setIsBonusTask(false); }} className={`text-[10px] px-3 py-1 rounded-full border transition-all flex items-center gap-1 ${isDailyChallenge ? 'fuchsia-gradient text-white animate-shimmer shadow-[0_0_15px_rgba(217,70,239,0.5)] border-transparent' : `${theme.inner} ${theme.textMuted} ${theme.border} hover:text-fuchsia-500`}`}>
+              <button onClick={() => { setIsDailyChallenge(!isDailyChallenge); setIsBonusTask(false); setNewTaskRecurring([]); }} className={`text-[10px] px-3 py-1 rounded-full border transition-all flex items-center gap-1 ${isDailyChallenge ? 'fuchsia-gradient text-white animate-shimmer shadow-[0_0_15px_rgba(217,70,239,0.5)] border-transparent' : `${theme.inner} ${theme.textMuted} ${theme.border} hover:text-fuchsia-500`}`}>
                 <Sparkles size={12} /> Desafio Diário
               </button>
             )}
             {hasBonusTaskAvailable && (
-              <button onClick={() => { setIsBonusTask(!isBonusTask); setIsDailyChallenge(false); }} className={`text-[10px] px-3 py-1 rounded-full border transition-all flex items-center gap-1 ${isBonusTask ? 'blue-gradient text-white animate-shimmer shadow-[0_0_15px_rgba(59,130,246,0.5)] border-transparent' : `${theme.inner} text-blue-500 ${theme.border} hover:text-blue-600`}`}>
+              <button onClick={() => { setIsBonusTask(!isBonusTask); setIsDailyChallenge(false); setNewTaskRecurring([]); }} className={`text-[10px] px-3 py-1 rounded-full border transition-all flex items-center gap-1 ${isBonusTask ? 'blue-gradient text-white animate-shimmer shadow-[0_0_15px_rgba(59,130,246,0.5)] border-transparent' : `${theme.inner} text-blue-500 ${theme.border} hover:text-blue-600`}`}>
                 <Gift size={12} /> Bônus
               </button>
             )}
@@ -1026,16 +1261,18 @@ export default function App() {
         <div className="space-y-3">
           <input type="text" placeholder={(isDailyChallenge || isBonusTask) ? "Qual é o grande objetivo?" : "O que precisa ser feito?"} value={newTaskText} onChange={(e) => setNewTaskText(e.target.value)} className={`w-full ${theme.inner} border rounded-xl px-4 py-3 ${theme.text} placeholder-zinc-500 focus:outline-none transition-colors ${isDailyChallenge ? 'border-fuchsia-500/50' : isBonusTask ? 'border-blue-500/50' : theme.border}`} />
           
+          <textarea placeholder="Descrição detalhada (opcional)..." value={newTaskDesc} maxLength={800} onChange={(e) => setNewTaskDesc(e.target.value)} className={`w-full ${theme.inner} border ${theme.border} rounded-xl px-4 py-3 text-sm ${theme.text} placeholder-zinc-500 focus:outline-none resize-none h-20`}></textarea>
+          
           {!(isDailyChallenge || isBonusTask) && (
             <div className="flex gap-2 mb-2">
-              {[ { id: 'P1', xp: 50, coins: 60, color: 'text-red-500', bg: 'bg-red-500/10', border: 'border-red-500/30', active: 'bg-red-500/20 border-red-500 shadow-[inset_0_0_10px_rgba(239,68,68,0.2)]' },
-                { id: 'P2', xp: 40, coins: 50, color: 'text-orange-500', bg: 'bg-orange-500/10', border: 'border-orange-500/30', active: 'bg-orange-500/20 border-orange-500' },
-                { id: 'P3', xp: 30, coins: 40, color: 'text-yellow-500', bg: 'bg-yellow-500/10', border: 'border-yellow-500/30', active: 'bg-yellow-500/20 border-yellow-500' },
-                { id: 'P4', xp: 20, coins: 30, color: 'text-blue-500', bg: 'bg-blue-500/10', border: 'border-blue-500/30', active: 'bg-blue-500/20 border-blue-500' }
+              {[ { id: 'P1', xp: 50, coins: 60, color: 'text-red-500', bg: 'bg-red-500/10', border: 'border-red-500/30', active: 'bg-red-500/20 border-red-500 shadow-[inset_0_0_10px_rgba(239,68,68,0.2)]', disabled: p1LimitReached },
+                { id: 'P2', xp: 40, coins: 50, color: 'text-orange-500', bg: 'bg-orange-500/10', border: 'border-orange-500/30', active: 'bg-orange-500/20 border-orange-500', disabled: p2LimitReached },
+                { id: 'P3', xp: 30, coins: 40, color: 'text-yellow-500', bg: 'bg-yellow-500/10', border: 'border-yellow-500/30', active: 'bg-yellow-500/20 border-yellow-500', disabled: false },
+                { id: 'P4', xp: 20, coins: 30, color: 'text-blue-500', bg: 'bg-blue-500/10', border: 'border-blue-500/30', active: 'bg-blue-500/20 border-blue-500', disabled: false }
               ].map(p => (
-                <button key={p.id} onClick={() => setNewTaskPriority(p.id)} className={`flex-1 flex flex-col items-center py-2 rounded-lg border transition-all ${newTaskPriority === p.id ? p.active : `${p.bg} ${p.border} opacity-70 hover:opacity-100`}`}>
+                <button key={p.id} disabled={p.disabled} onClick={() => setNewTaskPriority(p.id)} className={`flex-1 flex flex-col items-center py-2 rounded-lg border transition-all ${p.disabled && newTaskPriority !== p.id ? 'opacity-20 grayscale cursor-not-allowed' : newTaskPriority === p.id ? p.active : `${p.bg} ${p.border} opacity-70 hover:opacity-100`}`}>
                   <span className={`text-sm font-bold ${p.color}`}>{p.id}</span>
-                  <div className="flex items-center gap-1 mt-0.5"><span className={`text-[9px] ${theme.textMuted}`}>{p.xp} XP</span><Coins size={8} className="text-yellow-500"/></div>
+                  <div className="flex items-center gap-1 mt-0.5"><span className={`text-[9px] ${theme.textMuted}`}>{p.xp} XP</span>{(!p.disabled || newTaskPriority === p.id) && <Coins size={8} className="text-yellow-500"/>}</div>
                 </button>
               ))}
             </div>
@@ -1053,16 +1290,18 @@ export default function App() {
             </div>
           </div>
 
-          <div className={`flex flex-col sm:flex-row items-center gap-3 ${theme.inner} p-3 rounded-xl border ${theme.border} mt-1`}>
-            <span className={`text-xs ${theme.textMuted} font-medium flex items-center gap-1`}><RefreshCw size={12}/> Recorrente:</span>
-            <div className="flex gap-1 flex-1 w-full justify-between sm:justify-start">
-              {WEEK_DAYS.map(d => (
-                <button key={d.v} onClick={() => { setNewTaskRecurring(prev => prev.includes(d.v) ? prev.filter(x => x !== d.v) : [...prev, d.v]) }} className={`w-8 h-8 rounded-full text-xs font-bold transition-colors ${newTaskRecurring.includes(d.v) ? 'bg-emerald-500 text-white shadow-[0_0_8px_rgba(16,185,129,0.4)] border-transparent' : `${theme.panel} ${theme.textMuted} border ${theme.border}`}`}>
-                   {d.l}
-                </button>
-              ))}
-            </div>
-          </div>
+          {!(isDailyChallenge || isBonusTask) && (
+             <div className={`flex flex-col sm:flex-row items-center gap-3 ${theme.inner} p-3 rounded-xl border ${theme.border} mt-1`}>
+               <span className={`text-xs ${theme.textMuted} font-medium flex items-center gap-1`}><RefreshCw size={12}/> Recorrente:</span>
+               <div className="flex gap-1 flex-1 w-full justify-between sm:justify-start">
+                 {WEEK_DAYS.map(d => (
+                   <button key={d.v} onClick={() => { setNewTaskRecurring(prev => prev.includes(d.v) ? prev.filter(x => x !== d.v) : [...prev, d.v]) }} className={`w-8 h-8 rounded-full text-xs font-bold transition-colors ${newTaskRecurring.includes(d.v) ? 'bg-emerald-500 text-white shadow-[0_0_8px_rgba(16,185,129,0.4)] border-transparent' : `${theme.panel} ${theme.textMuted} border ${theme.border}`}`}>
+                      {d.l}
+                   </button>
+                 ))}
+               </div>
+             </div>
+          )}
 
           <div className="pt-2">
             <button onClick={addTask} className={`w-full py-4 rounded-xl font-black transition-all flex items-center justify-center gap-2 ${isDailyChallenge ? 'bg-gradient-to-r from-fuchsia-600 to-purple-600 shadow-[0_0_15px_rgba(217,70,239,0.4)] text-white hover:scale-[1.02]' : isBonusTask ? 'bg-gradient-to-r from-blue-600 to-cyan-600 shadow-[0_0_15px_rgba(59,130,246,0.4)] text-white hover:scale-[1.02]' : theme.btnPrimary}`}>
@@ -1095,23 +1334,28 @@ export default function App() {
             const cardAnimationClass = task.glowAnimation ? (task.glowAnimation === 'pet-glow' ? 'animate-pet-glow' : 'animate-card-glow') : '';
 
             return (
-              <div key={task.id} className={`flex items-center gap-3 p-4 rounded-xl border transition-all relative ${cardAnimationClass} ${task.completed && !task.glowAnimation ? theme.cardDone : `${pStyles.cardBg} ${pStyles.border}`}`}>
+              <div key={task.id} className={`flex items-start gap-3 p-4 rounded-xl border transition-all relative ${cardAnimationClass} ${task.completed && !task.glowAnimation ? theme.cardDone : `${pStyles.cardBg} ${pStyles.border}`}`}>
                 {task.rewardToast && (
                   <div className={`absolute top-0 right-4 animate-reward-toast ${task.isPetBuff ? 'text-yellow-500' : task.isCrit ? 'text-fuchsia-500' : 'text-emerald-500'} font-bold drop-shadow-md z-20 flex items-center gap-1 ${theme.panel} px-3 py-1.5 rounded-full border ${task.isPetBuff ? 'border-yellow-500/30' : 'border-emerald-500/30'}`}>
                      {!task.isPetBuff && <Sparkles size={14} />} {task.rewardToast}
                   </div>
                 )}
-                <button onClick={() => toggleTask(task.id)} className={`${task.completed ? 'text-emerald-500' : (task.isDailyChallenge || task.isBonusTask) ? (isDarkMode ? 'text-white/70' : 'text-black/50') : theme.textMuted} flex-shrink-0 transition-colors`}>
+                <button onClick={() => toggleTask(task.id)} className={`mt-1 ${task.completed ? 'text-emerald-500' : (task.isDailyChallenge || task.isBonusTask) ? (isDarkMode ? 'text-white/70' : 'text-black/50') : theme.textMuted} flex-shrink-0 transition-colors`}>
                   {task.completed ? <CheckCircle className="text-emerald-500" /> : <Circle />}
                 </button>
-                <div className="flex-1">
+                <div className="flex-1 overflow-hidden">
                   <div className="flex items-center gap-2 flex-wrap">
                     {(task.isDailyChallenge || task.isBonusTask) && !task.completed && <Sparkles size={14} className={`${isDarkMode ? 'text-white' : 'text-black/50'} animate-pulse flex-shrink-0`} />}
                     <p className={`text-sm ${task.completed ? `line-through ${theme.textMuted}` : theme.text} ${(task.isDailyChallenge || task.isBonusTask) ? 'font-bold' : ''}`}>{task.title}</p>
                     {isDepreciating && !task.completed && <span className={`text-[9px] bg-red-500/10 text-red-500 px-1.5 py-0.5 rounded border border-red-500/30 ml-2 animate-pulse`}>Valor: {100 - lossPercent}%</span>}
                     {activeFolder === 'Todas' && <span className={`text-[9px] ${theme.inner} ${theme.textMuted} border ${theme.border} px-1.5 py-0.5 rounded flex items-center gap-1`}><Folder size={8}/> {task.folder}</span>}
                   </div>
-                  <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                  
+                  {task.description && (
+                     <p className={`text-xs ${theme.textMuted} mt-1.5 line-clamp-3 leading-relaxed`}>{task.description}</p>
+                  )}
+
+                  <div className="flex items-center gap-2 mt-2 flex-wrap">
                     <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${pStyles.bg} ${pStyles.text}`}>{pStyles.label}</span>
                     {task.deadline && <span className={`text-[10px] ${theme.textMuted} ${theme.inner} border ${theme.border} px-1.5 py-0.5 rounded flex items-center gap-1`}><Calendar size={10} /> {formatDate(task.deadline)}</span>}
                     {task.deadlineTime && <span className={`text-[10px] ${task.isLate ? 'text-red-500 bg-red-500/10 border-red-500/30' : `${theme.textMuted} ${theme.inner} border ${theme.border}`} px-1.5 py-0.5 rounded flex items-center gap-1`}><Clock size={10} /> {task.deadlineTime}</span>}
@@ -1124,7 +1368,7 @@ export default function App() {
                     {hasBoost && !task.completed && <span className="text-[10px] font-black bg-gradient-to-r from-yellow-400 to-amber-500 text-black px-2 py-0.5 rounded animate-float shadow-sm">{task.boost}x BOOST</span>}
                   </div>
                 </div>
-                <button onClick={() => deleteTask(task.id)} className={`p-2 rounded-lg ${(task.isDailyChallenge || task.isBonusTask) ? (isDarkMode ? 'text-white/50' : 'text-black/50') : theme.textMuted} hover:text-red-500`}><X size={16} /></button>
+                <button onClick={() => handleDeleteClick(task.id, 'task')} className={`p-2 rounded-lg ${(task.isDailyChallenge || task.isBonusTask) ? (isDarkMode ? 'text-white/50' : 'text-black/50') : theme.textMuted} hover:text-red-500`}><X size={16} /></button>
               </div>
             );
           })
@@ -1147,14 +1391,15 @@ export default function App() {
             <span className={`text-xs ${theme.textMuted}`}>{habits.length}/5 Máximo</span>
           </div>
           <div className="space-y-3">
-            <input type="text" placeholder="Ex: Beber 2L de Água" value={newHabitText} onChange={(e) => setNewHabitText(e.target.value)} className={`w-full ${theme.inner} border ${theme.border} rounded-xl px-4 py-3 ${theme.text} placeholder-zinc-500 focus:outline-none`} />
-            <div className="flex gap-2">
+            <input type="text" placeholder="Qual é o hábito? (Ex: Beber Água)" value={newHabitText} onChange={(e) => setNewHabitText(e.target.value)} className={`w-full ${theme.inner} border ${theme.border} rounded-xl px-4 py-3 ${theme.text} placeholder-zinc-500 focus:outline-none`} />
+            <textarea placeholder="Descrição (opcional)..." value={newHabitDesc} maxLength={800} onChange={(e) => setNewHabitDesc(e.target.value)} className={`w-full ${theme.inner} border ${theme.border} rounded-xl px-4 py-3 text-sm ${theme.text} placeholder-zinc-500 focus:outline-none resize-none h-16`}></textarea>
+            <div className="flex flex-col sm:flex-row gap-2">
               <select value={newHabitType} onChange={(e) => setNewHabitType(e.target.value)} className={`${theme.inner} border ${theme.border} rounded-xl px-4 py-3 ${theme.text} focus:outline-none flex-1 text-sm`}>
                 <option value="single">Check Único</option>
                 <option value="count">Contagem Diária</option>
               </select>
-              {newHabitType === 'count' && <input type="number" min="2" max="100" value={newHabitTarget} onChange={(e) => setNewHabitTarget(parseInt(e.target.value))} className={`w-20 ${theme.inner} border ${theme.border} rounded-xl px-4 py-3 ${theme.text} text-center focus:outline-none`} />}
-              <button onClick={addHabit} className={`px-6 rounded-xl font-bold transition-colors ${theme.btnPrimary}`}>Criar</button>
+              {newHabitType === 'count' && <input type="number" min="2" max="100" value={newHabitTarget} onChange={(e) => setNewHabitTarget(parseInt(e.target.value))} className={`w-full sm:w-20 ${theme.inner} border ${theme.border} rounded-xl px-4 py-3 ${theme.text} text-center focus:outline-none`} />}
+              <button onClick={addHabit} className={`w-full sm:w-auto px-6 py-3 sm:py-0 rounded-xl font-bold transition-colors ${theme.btnPrimary}`}>Criar</button>
             </div>
           </div>
         </div>
@@ -1185,11 +1430,13 @@ export default function App() {
             return (
               <div key={habit.id} className={`${streakStyle.bg} ${streakStyle.isShimmer ? 'animate-shimmer shadow-lg' : ''} border ${streakStyle.border} p-4 rounded-xl flex items-center gap-4 transition-all duration-500 relative overflow-hidden`}>
                 {habit.frozen && <Snowflake size={40} className="absolute -right-2 -bottom-2 text-cyan-500/20" />}
-                <div className="flex-1 relative z-10">
+                <div className="flex-1 relative z-10 overflow-hidden">
                   <div className="flex justify-between items-center mb-2">
                     <h4 className={`font-medium ${titleColor}`}>{habit.title} {habit.frozen && '(Congelado)'}</h4>
-                    <button onClick={() => deleteHabit(habit.id)} className={`${streakStyle.isShimmer ? 'text-black/50 hover:text-black' : `${theme.textMuted} hover:text-red-500`}`}><X size={16} /></button>
+                    <button onClick={() => handleDeleteClick(habit.id, 'habit')} className={`${streakStyle.isShimmer ? 'text-black/50 hover:text-black' : `${theme.textMuted} hover:text-red-500`}`}><X size={16} /></button>
                   </div>
+                  {habit.description && <p className={`text-xs ${habit.completed ? theme.textMuted : 'text-zinc-500'} mb-2 line-clamp-2 leading-relaxed`}>{habit.description}</p>}
+                  
                   <div className="flex items-center gap-3">
                     {habit.type === 'count' ? (
                       <div className="flex-1 flex items-center gap-2">
@@ -1228,23 +1475,94 @@ export default function App() {
 
   const renderStore = () => (
     <div className="space-y-6 relative z-10 pb-24">
-      <div className={`bg-gradient-to-r from-amber-500/20 to-yellow-500/20 border border-yellow-500/30 p-6 rounded-2xl flex items-center justify-between mb-8`}>
-         <div>
-           <p className="text-yellow-600 dark:text-yellow-500 text-sm font-bold uppercase tracking-wider mb-1">Seu Saldo</p>
-           <h2 className={`text-4xl font-black ${theme.text} flex items-center gap-2`}>
-             <span className={`${coinAnim === 'up' ? 'animate-coin-up' : coinAnim === 'down' ? 'animate-coin-down' : ''} inline-block`}>
-               {user.coins}
-             </span>
-             <Coins size={32} className="text-yellow-500" />
-           </h2>
-         </div>
-         <ShoppingCart size={48} className="text-yellow-600/30" />
+      {/* HEADER LOJA */}
+      <div className="grid grid-cols-2 gap-4 mb-8">
+          <div className={`bg-gradient-to-r from-amber-500/20 to-yellow-500/20 border border-yellow-500/30 p-4 rounded-2xl flex flex-col justify-center shadow-inner`}>
+             <p className="text-yellow-600 dark:text-yellow-500 text-[10px] font-bold uppercase tracking-wider mb-1">Seu Saldo</p>
+             <h2 className={`text-3xl font-black ${theme.text} flex items-center gap-2`}>
+               <span className={`${coinAnim === 'up' ? 'animate-coin-up' : coinAnim === 'down' ? 'animate-coin-down' : ''} inline-block`}>{user.coins}</span>
+               <Coins size={24} className="text-yellow-500" />
+             </h2>
+          </div>
+          <div className={`bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border border-emerald-500/30 p-4 rounded-2xl flex flex-col justify-center shadow-inner`}>
+             <p className="text-emerald-600 dark:text-emerald-500 text-[10px] font-bold uppercase tracking-wider mb-1">Vouchers (Premium)</p>
+             <h2 className={`text-3xl font-black ${theme.text} flex items-center gap-2`}>
+               {user.vouchers} <Ticket size={24} className="text-emerald-500" />
+             </h2>
+          </div>
       </div>
+
+      {/* MERCADO NEGRO (VOUCHERS) */}
+      <div className="mb-8">
+         <h2 className={`text-sm font-black ${theme.textMuted} uppercase tracking-widest mb-4 flex items-center gap-2`}><Ticket size={16}/> Mercado de Vouchers</h2>
+         <div className="grid gap-4">
+            <div className={`${theme.panel} border border-emerald-500/30 p-5 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center gap-4 relative overflow-hidden group`}>
+              <div className={`w-16 h-16 rounded-xl ${theme.inner} flex items-center justify-center flex-shrink-0 border border-emerald-500/30`}>
+                <Flame size={32} className="text-emerald-500" />
+              </div>
+              <div className="flex-1">
+                <h3 className={`text-lg font-bold ${theme.text} mb-1`}>Buffador de Pet</h3>
+                <p className={`text-xs ${theme.textMuted} leading-relaxed`}>Uma guloseima mágica. Aumenta os benefícios base do seu pet atual em +5% permanentemente.</p>
+              </div>
+              <button onClick={() => buyVoucherItem('petBuff')} className="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-400 text-white font-bold py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+                10 <Ticket size={16} />
+              </button>
+            </div>
+
+            <div className={`${theme.panel} border border-emerald-500/30 p-5 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center gap-4 relative overflow-hidden group`}>
+              <div className={`w-16 h-16 rounded-xl ${theme.inner} flex items-center justify-center flex-shrink-0 border border-emerald-500/30`}>
+                <PackageOpen size={32} className="text-fuchsia-500" />
+              </div>
+              <div className="flex-1">
+                <h3 className={`text-lg font-bold ${theme.text} mb-1`}>Lootbox Instantânea</h3>
+                <p className={`text-xs ${theme.textMuted} leading-relaxed`}>Não quer esperar pelos 3000 XP? Compre uma Lootbox e tente a sorte agora mesmo.</p>
+              </div>
+              <button onClick={() => buyVoucherItem('lootbox')} className="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-400 text-white font-bold py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+                10 <Ticket size={16} />
+              </button>
+            </div>
+
+            <div className={`${theme.panel} border border-emerald-500/30 p-5 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center gap-4 relative overflow-hidden group`}>
+              <div className={`w-16 h-16 rounded-xl ${theme.inner} flex items-center justify-center flex-shrink-0 border border-emerald-500/30`}>
+                <Zap size={32} className="text-yellow-500" />
+              </div>
+              <div className="flex-1">
+                <h3 className={`text-lg font-bold ${theme.text} mb-1`}>Último Gás</h3>
+                <p className={`text-xs ${theme.textMuted} leading-relaxed`}>Ativa um multiplicador x2 em TODAS as tarefas concluídas no dia de hoje.</p>
+              </div>
+              <button onClick={() => buyVoucherItem('lastGasp')} disabled={user.activeBuffs.lastGasp} className={`w-full sm:w-auto font-bold py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-all ${user.activeBuffs.lastGasp ? `${theme.inner} ${theme.textMuted}` : 'bg-emerald-500 hover:bg-emerald-400 text-white shadow-[0_0_15px_rgba(16,185,129,0.3)]'}`}>
+                {user.activeBuffs.lastGasp ? 'Ativo' : <><Ticket size={16} /> 15</>}
+              </button>
+            </div>
+
+            <div className={`${theme.panel} border border-pink-500/50 p-5 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center gap-4 relative overflow-hidden group shadow-[0_0_20px_rgba(236,72,153,0.1)]`}>
+              <div className="absolute inset-0 bg-pink-500/5 animate-pulse"></div>
+              <div className={`w-16 h-16 rounded-xl ${theme.inner} flex items-center justify-center flex-shrink-0 border border-pink-500/50 z-10`}>
+                <Dices size={32} className="text-pink-500" />
+              </div>
+              <div className="flex-1 z-10">
+                <h3 className={`text-lg font-bold ${theme.text} mb-1`}>Giro da Sorte</h3>
+                <p className={`text-xs ${theme.textMuted} leading-relaxed`}>O Cassino Vouchers. Arrisque para multiplicar os ganhos. Prémio máximo: Diamante (3000 Moedas).</p>
+                <div className="flex items-center gap-2 mt-2">
+                   <span className="text-[10px] uppercase font-bold text-pink-500">Aposta:</span>
+                   {[1,2,3,4,5].map(v => (
+                      <button key={v} onClick={() => setSlotBet(v)} className={`w-6 h-6 rounded text-xs font-bold transition-all ${slotBet === v ? 'bg-pink-500 text-white scale-110' : `${theme.inner} ${theme.textMuted} hover:text-white`}`}>{v}</button>
+                   ))}
+                </div>
+              </div>
+              <button onClick={startSlotMachine} className="w-full sm:w-auto z-10 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-bold py-3 px-8 rounded-xl flex items-center justify-center gap-2 transition-all shadow-[0_0_15px_rgba(236,72,153,0.4)]">
+                 Girar ({slotBet} <Ticket size={14}/>)
+              </button>
+            </div>
+         </div>
+      </div>
+
+      <h2 className={`text-sm font-black ${theme.textMuted} uppercase tracking-widest mb-4 flex items-center gap-2`}><Coins size={16}/> Loja Clássica</h2>
 
       <div className="grid gap-4">
         {/* PET CARE ITEMS */}
         {user.pet && user.pet.type !== 'egg' && !user.pet.isDead && (
-          <div className={`${theme.panel} border border-amber-500/30 p-4 rounded-2xl flex flex-wrap gap-2 items-center justify-between`}>
+          <div className={`${theme.panel} border border-amber-500/30 p-4 rounded-2xl flex flex-wrap gap-2 items-center justify-between shadow-[inset_0_0_20px_rgba(217,119,6,0.1)]`}>
              <div className="flex-1 w-full sm:w-auto text-center sm:text-left mb-2 sm:mb-0">
                 <h3 className="text-sm font-bold text-amber-500 flex items-center gap-1"><ShoppingCart size={14}/> Pet Shop</h3>
              </div>
@@ -1289,6 +1607,7 @@ export default function App() {
 
         {/* Buffs / Espíritos */}
         <div className={`${theme.panel} border ${theme.border} p-5 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center gap-4 relative overflow-hidden group`}>
+          <div className="absolute top-0 right-0 w-32 h-32 bg-fuchsia-500/10 rounded-full blur-3xl group-hover:bg-fuchsia-500/20 transition-all"></div>
           <div className={`w-16 h-16 rounded-xl ${theme.inner} flex items-center justify-center flex-shrink-0 border border-fuchsia-500/30 z-10`}>
             <Sword size={32} className="text-fuchsia-500" />
           </div>
@@ -1296,12 +1615,13 @@ export default function App() {
             <h3 className={`text-lg font-bold ${theme.text} mb-1`}>Espírito Realizador</h3>
             <p className={`text-xs ${theme.textMuted} leading-relaxed`}>Aumenta os prêmios em 20% hoje. Permite desferir 1 Dano Crítico por dia (+50% Buff extra) com chance maior em tarefas fáceis.</p>
           </div>
-          <button onClick={() => handleBuyBuff('realizador')} disabled={user.activeBuffs.realizador} className={`w-full sm:w-auto z-10 font-bold py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-all ${user.activeBuffs.realizador ? `${theme.inner} ${theme.textMuted}` : 'bg-fuchsia-500 hover:bg-fuchsia-400 text-white shadow-[0_0_15px_rgba(217,70,239,0.3)]'}`}>
+          <button onClick={() => handleBuyBuff('realizador')} disabled={user.activeBuffs.realizador} className={`w-full sm:w-auto z-10 font-bold py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-all ${user.activeBuffs.realizador ? `${theme.inner} ${theme.textMuted}` : 'bg-fuchsia-500 hover:bg-fuchsia-400 text-white shadow-[0_0_15px_rgba(192,38,211,0.3)]'}`}>
             {user.activeBuffs.realizador ? 'Ativo' : <><Coins size={16} /> 400</>}
           </button>
         </div>
 
         <div className={`${theme.panel} border ${theme.border} p-5 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center gap-4 relative overflow-hidden group`}>
+          <div className="absolute top-0 left-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-3xl group-hover:bg-cyan-500/20 transition-all"></div>
           <div className={`w-16 h-16 rounded-xl ${theme.inner} flex items-center justify-center flex-shrink-0 border border-cyan-500/30 z-10`}>
             <Shield size={32} className="text-cyan-500" />
           </div>
@@ -1340,88 +1660,155 @@ export default function App() {
             400 <Coins size={16} />
           </button>
         </div>
+
+        {/* Itens Clássicos */}
+        <div className={`${theme.panel} border ${theme.border} p-5 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center gap-4 relative overflow-hidden group`}>
+          <div className={`w-16 h-16 rounded-xl ${theme.inner} flex items-center justify-center flex-shrink-0 border border-sky-500/30`}>
+            <Snowflake size={32} className="text-sky-500" />
+          </div>
+          <div className="flex-1">
+            <h3 className={`text-lg font-bold ${theme.text} mb-1`}>Congelamento</h3>
+            <p className={`text-xs ${theme.textMuted} leading-relaxed`}>Escolha um hábito para congelar hoje. Ele contará como concluído magicamente e a sua ofensiva ficará intacta.</p>
+          </div>
+          <button onClick={() => setFreezeModalOpen(true)} className="w-full sm:w-auto bg-sky-500 hover:bg-sky-400 text-white font-bold py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-all shadow-[0_0_15px_rgba(14,165,233,0.3)]">
+            500 <Coins size={16} />
+          </button>
+        </div>
+
+        <div className={`${theme.panel} border ${theme.border} p-5 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center gap-4 relative overflow-hidden group`}>
+          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl group-hover:bg-blue-500/20 transition-all"></div>
+          <div className={`w-16 h-16 rounded-xl ${theme.inner} flex items-center justify-center flex-shrink-0 border border-blue-500/30 z-10`}>
+            <Gift size={32} className="text-blue-500" />
+          </div>
+          <div className="flex-1 z-10">
+            <h3 className={`text-lg font-bold ${theme.text} mb-1`}>Tarefa Bónus</h3>
+            <p className={`text-xs ${theme.textMuted} leading-relaxed`}>Adiciona um espaço extra reluzente no separador de criação. Mesmas recompensas massivas do Desafio Diário.</p>
+          </div>
+          <button onClick={handleBuyBonusTask} disabled={hasBonusTaskAvailable} className={`w-full sm:w-auto z-10 font-bold py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-all ${hasBonusTaskAvailable ? `${theme.inner} ${theme.textMuted}` : 'bg-blue-500 hover:bg-blue-400 text-white shadow-[0_0_15px_rgba(59,130,246,0.3)]'}`}>
+            {hasBonusTaskAvailable ? 'Adquirido' : <><Coins size={16} /> 650</>}
+          </button>
+        </div>
       </div>
     </div>
   );
 
   const renderRanking = () => (
     <div className="space-y-4 relative z-10 pb-24">
-      <div className={`${theme.panel} border ${theme.border} p-6 rounded-2xl flex flex-col items-center justify-center mb-6 shadow-xl relative overflow-hidden`}>
-        <div className="absolute top-0 right-0 p-4 opacity-5"><Trophy size={100} /></div>
-        <span className={`text-zinc-500 text-sm font-medium uppercase tracking-widest mb-2`}>Sua Posição</span>
-        <div className="flex items-baseline gap-2">
-          <span className={`text-5xl font-black ${theme.text}`}>#{userRankPosition}</span>
-          <span className={`text-zinc-400 text-sm`}>de 100</span>
-        </div>
+      {/* Toggles Ranking / Feed */}
+      <div className="flex gap-2 mb-6">
+         <button onClick={() => setRankingView('ranking')} className={`flex-1 py-3 rounded-xl font-bold transition-colors flex justify-center items-center gap-2 ${rankingView === 'ranking' ? theme.btnPrimary : `${theme.panel} border ${theme.border} ${theme.textMuted}`}`}>
+            <Trophy size={18}/> Tabela Global
+         </button>
+         <button onClick={() => setRankingView('feed')} className={`flex-1 py-3 rounded-xl font-bold transition-colors flex justify-center items-center gap-2 ${rankingView === 'feed' ? theme.btnPrimary : `${theme.panel} border ${theme.border} ${theme.textMuted}`}`}>
+            <Globe size={18}/> Feed do Mundo
+         </button>
       </div>
 
-      <div className={`${theme.panel} border ${theme.border} rounded-2xl overflow-hidden shadow-lg`}>
-        <div className={`p-3 border-b ${theme.border} flex justify-between items-center text-xs text-zinc-500 font-bold uppercase tracking-wider`}>
-           <span>Competidor</span>
-           <span>XP Mensal</span>
-        </div>
-        
-        {rankingList.slice(0, showAllRanking ? 100 : 50).map((u, index) => {
-          const medalCounts = countMedals(u.medals || []);
-          const isMe = u.isUser;
-
-          return (
-            <div key={u.id} className={`flex items-center gap-3 p-4 border-b ${theme.border} last:border-0 ${isMe ? theme.inner : ''}`}>
-              <span className={`font-mono text-sm w-6 text-center ${index === 0 ? 'text-yellow-500 font-bold' : index === 1 ? 'text-slate-400 font-bold' : index === 2 ? 'text-amber-600 font-bold' : 'text-zinc-500'}`}>{index + 1}</span>
-              <div className="w-4 flex justify-center">
-                {u.trend === 'up' && <ArrowUp size={14} className="text-emerald-500" />}
-                {u.trend === 'down' && <ArrowDown size={14} className="text-red-500" />}
-                {u.trend === 'same' && <Minus size={14} className="text-zinc-400" />}
-              </div>
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-xl shadow-inner ${isMe ? 'bg-emerald-500 text-white' : `${theme.inner}`}`}>
-                {isMe ? <User size={20} /> : u.emoji}
-              </div>
-              <div className="flex-1 flex flex-col justify-center truncate">
-                <div className="flex items-center gap-2">
-                  <p className={`font-medium truncate ${isMe ? theme.text : theme.textMuted}`}>{u.name}</p>
-                  
-                  {u.activeBuffs?.realizador && <Sword size={12} className="text-fuchsia-500 drop-shadow" title="Espírito Realizador Ativo"/>}
-                  {u.activeBuffs?.resguardo && <Shield size={12} className="text-cyan-500 drop-shadow" title="Espírito de Resguardo Ativo"/>}
-                  
-                  {isMe && <span className="text-[10px] bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-full flex-shrink-0">Você</span>}
-                </div>
-                
-                {Object.keys(medalCounts).length > 0 && (
-                  <div className="flex gap-2 mt-1.5">
-                    {['plat', 'gold', 'silver', 'bronze'].map(mType => {
-                       if (!medalCounts[mType]) return null;
-                       return (
-                          <div key={mType} className="relative flex items-center" title={`${medalCounts[mType]}x ${mType}`}>
-                             <div className={`w-4 h-4 rounded-full ${MEDAL_STYLES[mType]} flex items-center justify-center`}>
-                               <Award size={8} className="text-white drop-shadow-md"/>
-                             </div>
-                             {medalCounts[mType] > 1 && (
-                                <span className="text-[9px] font-bold text-zinc-500 ml-1">x{medalCounts[mType]}</span>
-                             )}
-                          </div>
-                       )
-                    })}
-                  </div>
-                )}
-              </div>
-              <div className="text-right flex flex-col items-end gap-1">
-                 <p className={`font-mono text-sm ${theme.text}`}>{u.monthlyXp}</p>
-                 {!isMe && (
-                    <button onClick={() => challengeBot(u.id, u.name, u.emoji)} className="text-[10px] bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-500 px-2 py-0.5 rounded flex items-center gap-1 transition-colors">
-                      <Swords size={10} /> Desafiar
-                    </button>
-                 )}
-              </div>
+      {rankingView === 'ranking' ? (
+        <>
+          <div className={`${theme.panel} border ${theme.border} p-6 rounded-2xl flex flex-col items-center justify-center mb-6 shadow-xl relative overflow-hidden`}>
+            <div className="absolute top-0 right-0 p-4 opacity-5"><Trophy size={100} /></div>
+            <span className={`text-zinc-500 text-sm font-medium uppercase tracking-widest mb-2`}>Sua Posição</span>
+            <div className="flex items-baseline gap-2">
+              <span className={`text-5xl font-black ${theme.text}`}>#{userRankPosition}</span>
+              <span className={`text-zinc-400 text-sm`}>de 100</span>
             </div>
-          )
-        })}
-        
-        {!showAllRanking && rankingList.length > 50 && (
-           <button onClick={() => setShowAllRanking(true)} className={`w-full p-4 text-center ${theme.textMuted} text-sm hover:${theme.text} hover:${theme.inner} transition-colors flex items-center justify-center gap-2`}>
-              <ChevronDown size={16} /> Mostrar Restantes
-           </button>
-        )}
-      </div>
+          </div>
+
+          <div className={`${theme.panel} border ${theme.border} rounded-2xl overflow-hidden shadow-lg`}>
+            <div className={`p-3 border-b ${theme.border} flex justify-between items-center text-xs text-zinc-500 font-bold uppercase tracking-wider`}>
+               <span>Competidor</span>
+               <span>XP Mensal</span>
+            </div>
+            
+            {rankingList.slice(0, showAllRanking ? 100 : 50).map((u, index) => {
+              const medalCounts = countMedals(u.medals || []);
+              const isMe = u.isUser;
+
+              return (
+                <div key={u.id} className={`flex items-center gap-3 p-4 border-b ${theme.border} last:border-0 ${isMe ? theme.inner : ''}`}>
+                  <span className={`font-mono text-sm w-6 text-center ${index === 0 ? 'text-yellow-500 font-bold' : index === 1 ? 'text-slate-400 font-bold' : index === 2 ? 'text-amber-600 font-bold' : 'text-zinc-500'}`}>{index + 1}</span>
+                  <div className="w-4 flex justify-center">
+                    {u.trend === 'up' && <ArrowUp size={14} className="text-emerald-500" />}
+                    {u.trend === 'down' && <ArrowDown size={14} className="text-red-500" />}
+                    {u.trend === 'same' && <Minus size={14} className="text-zinc-400" />}
+                  </div>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-xl shadow-inner ${isMe ? 'bg-emerald-500 text-white' : `${theme.inner}`}`}>
+                    {isMe ? <User size={20} /> : u.emoji}
+                  </div>
+                  <div className="flex-1 flex flex-col justify-center truncate">
+                    <div className="flex items-center gap-2">
+                      <p className={`font-medium truncate ${isMe ? theme.text : theme.textMuted}`}>
+                         <span className={`text-[10px] ${theme.inner} ${theme.textMuted} px-1 rounded mr-1`}>Nv {u.level || user.level}</span>
+                         {u.name}
+                      </p>
+                      
+                      {u.activeBuffs?.realizador && <Sword size={12} className="text-fuchsia-500 drop-shadow" title="Espírito Realizador Ativo"/>}
+                      {u.activeBuffs?.resguardo && <Shield size={12} className="text-cyan-500 drop-shadow" title="Espírito de Resguardo Ativo"/>}
+                      {u.activeBuffs?.duelWin && <span className="text-[10px] font-bold text-yellow-500 flex items-center bg-yellow-500/10 px-1 rounded border border-yellow-500/30" title="Buff de Duelo (+15%)">⚔️+</span>}
+                      {u.activeBuffs?.duelLoss && <span className="text-[10px] font-bold text-red-500 flex items-center bg-red-500/10 px-1 rounded border border-red-500/30" title="Nerf de Duelo (-15%)">⚔️-</span>}
+                      {u.pet && u.pet.type !== 'egg' && !u.pet.isDead && <span className="text-sm drop-shadow" title={`Pet: ${PET_TYPES[u.pet.type]?.name}`}>{PET_TYPES[u.pet.type]?.emoji}</span>}
+                      
+                      {isMe && <span className="text-[10px] bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-full flex-shrink-0">Você</span>}
+                    </div>
+                    
+                    {Object.keys(medalCounts).length > 0 && (
+                      <div className="flex gap-2 mt-1.5">
+                        {['plat', 'gold', 'silver', 'bronze'].map(mType => {
+                           if (!medalCounts[mType]) return null;
+                           return (
+                              <div key={mType} className="relative flex items-center" title={`${medalCounts[mType]}x ${mType}`}>
+                                 <div className={`w-4 h-4 rounded-full ${MEDAL_STYLES[mType]} flex items-center justify-center`}>
+                                   <Award size={8} className="text-white drop-shadow-md"/>
+                                 </div>
+                                 {medalCounts[mType] > 1 && (
+                                    <span className="text-[9px] font-bold text-zinc-500 ml-1">x{medalCounts[mType]}</span>
+                                 )}
+                              </div>
+                           )
+                        })}
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-right flex flex-col items-end gap-1">
+                     <p className={`font-mono text-sm ${theme.text}`}>{u.monthlyXp}</p>
+                     {!isMe && (
+                        <button onClick={() => challengeBot(u.id, u.name, u.emoji)} className="text-[10px] bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-500 px-2 py-0.5 rounded flex items-center gap-1 transition-colors">
+                          <Swords size={10} /> Desafiar
+                        </button>
+                     )}
+                  </div>
+                </div>
+              )
+            })}
+            
+            {!showAllRanking && rankingList.length > 50 && (
+               <button onClick={() => setShowAllRanking(true)} className={`w-full p-4 text-center ${theme.textMuted} text-sm hover:${theme.text} hover:${theme.inner} transition-colors flex items-center justify-center gap-2`}>
+                  <ChevronDown size={16} /> Mostrar Restantes
+               </button>
+            )}
+          </div>
+        </>
+      ) : (
+        // FEED DO MUNDO
+        <div className="space-y-3 animate-in fade-in slide-in-from-right-4">
+           {globalFeed.length === 0 ? (
+               <div className={`text-center py-10 ${theme.textMuted}`}>
+                 <Globe size={48} className="mx-auto mb-3 opacity-20" />
+                 <p>O mundo está silencioso. Volte amanhã para ver as novidades.</p>
+               </div>
+           ) : (
+               globalFeed.map((evt, idx) => (
+                  <div key={idx} className={`${theme.panel} border ${theme.border} p-4 rounded-2xl flex items-center gap-4 shadow-sm`}>
+                     <div className={`w-10 h-10 rounded-full ${theme.inner} border ${theme.border} flex items-center justify-center text-xl shadow-inner flex-shrink-0`}>
+                        {evt.icon}
+                     </div>
+                     <p className={`text-sm ${theme.text} leading-relaxed`}>{evt.text}</p>
+                  </div>
+               ))
+           )}
+        </div>
+      )}
     </div>
   );
 
@@ -1432,7 +1819,7 @@ export default function App() {
         <h3 className="text-amber-600 dark:text-amber-500 text-xs font-bold uppercase mb-3 flex items-center gap-2"><Zap size={14} /> Controlos de Simulação</h3>
         <p className={`text-xs mb-3 ${theme.textMuted}`}>Data simulada: {currentDate.toLocaleDateString()}</p>
         <div className="flex gap-2 flex-wrap">
-          <button onClick={simulateNextDay} className={`flex-1 ${theme.inner} hover:${theme.panel} ${theme.text} py-2 px-3 rounded-lg text-sm border ${theme.border} whitespace-nowrap`}>Virar Dia</button>
+          <button onClick={processNextDay} className={`flex-1 ${theme.inner} hover:${theme.panel} ${theme.text} py-2 px-3 rounded-lg text-sm border ${theme.border} whitespace-nowrap`}>Virar Dia</button>
           <button onClick={simulateNextMonth} className={`flex-1 ${theme.inner} hover:${theme.panel} ${theme.text} py-2 px-3 rounded-lg text-sm border ${theme.border} whitespace-nowrap`}>Virar Mês</button>
           <button onClick={() => { addXpAndCoins(0, 1000); showToast("+1000 Moedas!"); }} className="flex-1 bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-600 dark:text-yellow-500 py-2 px-3 rounded-lg text-sm border border-yellow-500/30 whitespace-nowrap flex items-center justify-center gap-1">
             +1000 <Coins size={14} />
@@ -1496,7 +1883,25 @@ export default function App() {
         </div>
       </div>
 
-      <div className={`${theme.panel} border ${theme.border} p-6 rounded-2xl shadow-sm`}>
+      <div className={`${theme.panel} border ${theme.border} p-4 rounded-2xl shadow-sm mt-4`}>
+        <p className={`text-xs ${theme.textMuted} font-medium uppercase mb-2 flex items-center gap-1`}><Swords size={14}/> Duelos Diários</p>
+        <div className={`flex justify-between items-center ${theme.inner} p-3 rounded-xl border ${theme.border}`}>
+           <div className="flex flex-col items-center">
+              <span className="text-xl text-emerald-500 font-black">{user.duelStats?.wins || 0}</span>
+              <span className={`text-[10px] ${theme.textMuted}`}>VITÓRIAS</span>
+           </div>
+           <div className="flex flex-col items-center">
+              <span className="text-xl text-yellow-500 font-black">{user.duelStats?.ties || 0}</span>
+              <span className={`text-[10px] ${theme.textMuted}`}>EMPATES</span>
+           </div>
+           <div className="flex flex-col items-center">
+              <span className="text-xl text-red-500 font-black">{user.duelStats?.losses || 0}</span>
+              <span className={`text-[10px] ${theme.textMuted}`}>DERROTAS</span>
+           </div>
+        </div>
+      </div>
+
+      <div className={`${theme.panel} border ${theme.border} p-6 rounded-2xl shadow-sm mt-4`}>
         <div className="flex justify-between items-end mb-2">
           <span className={`text-sm ${theme.textMuted}`}>Progresso Nível {user.level + 1}</span>
           <span className={`font-mono text-sm ${theme.text}`}>{user.xp} / {getRequiredXp(user.level)}</span>
@@ -1514,6 +1919,15 @@ export default function App() {
       <GlobalStyles />
       <ParticlesBackground isDarkMode={isDarkMode} />
 
+      {/* TELA DE PROCESSAMENTO DA NOITE */}
+      {isProcessingDay && (
+         <div className={`fixed inset-0 ${theme.bg} z-[1000] flex flex-col justify-center items-center p-6 animate-in fade-in`}>
+            <Moon size={64} className="text-indigo-500 mb-8 animate-pulse" />
+            <h2 className={`text-2xl font-black ${theme.text} mb-2 tracking-widest uppercase`}>A calcular Progresso...</h2>
+            <p className={theme.textMuted}>Os deuses do foco estão a avaliar as suas ações.</p>
+         </div>
+      )}
+
       {/* Header Fixo com Barra de Progresso e Medalhas */}
       <header className={`pt-12 pb-4 px-6 relative z-10 sticky top-0 ${theme.nav} backdrop-blur-md transition-colors duration-500`}>
         <div className="flex justify-between items-center mb-3">
@@ -1521,7 +1935,6 @@ export default function App() {
             Focus<span className={theme.textMuted}>Quest</span>
           </h1>
           <div className="flex items-center gap-3">
-            {/* Tema Switch */}
             <button onClick={() => setIsDarkMode(!isDarkMode)} className={`w-10 h-10 rounded-full ${theme.inner} border ${theme.border} flex items-center justify-center shadow-sm transition-colors`}>
                {isDarkMode ? <Sun size={18} className={theme.textMuted} /> : <Moon size={18} className={theme.textMuted} />}
             </button>
@@ -1571,19 +1984,20 @@ export default function App() {
                <Coins size={12} className="ml-1"/>
              </span>
 
+             {/* Vouchers Top Bar */}
+             <span className={`text-xs font-bold flex items-center ${theme.inner} px-2 py-0.5 rounded border border-emerald-500/30 text-emerald-600 dark:text-emerald-500`}>
+               {user.vouchers || 0}
+               <Ticket size={12} className="ml-1"/>
+             </span>
+
              {/* Buffs Ativos do Utilizador */}
-             {(user.activeBuffs.realizador || user.activeBuffs.resguardo) && (
+             {(user.activeBuffs.realizador || user.activeBuffs.resguardo || user.activeBuffs.duelWin || user.activeBuffs.duelLoss || user.activeBuffs.lastGasp) && (
                <div className={`flex gap-1 border-l ${theme.border} pl-2 ml-1`}>
-                 {user.activeBuffs.realizador && (
-                    <div className="w-6 h-6 rounded-full bg-fuchsia-500/20 border border-fuchsia-500/50 flex items-center justify-center animate-pulse" title="Espírito Realizador Ativo">
-                      <Sword size={12} className="text-fuchsia-500 drop-shadow" />
-                    </div>
-                 )}
-                 {user.activeBuffs.resguardo && (
-                    <div className="w-6 h-6 rounded-full bg-cyan-500/20 border border-cyan-500/50 flex items-center justify-center animate-pulse" title="Espírito de Resguardo Ativo">
-                      <Shield size={12} className="text-cyan-500 drop-shadow" />
-                    </div>
-                 )}
+                 {user.activeBuffs.realizador && <div className="w-6 h-6 rounded-full bg-fuchsia-500/20 border border-fuchsia-500/50 flex items-center justify-center animate-pulse" title="Espírito Realizador Ativo"><Sword size={12} className="text-fuchsia-500 drop-shadow" /></div>}
+                 {user.activeBuffs.resguardo && <div className="w-6 h-6 rounded-full bg-cyan-500/20 border border-cyan-500/50 flex items-center justify-center animate-pulse" title="Espírito de Resguardo Ativo"><Shield size={12} className="text-cyan-500 drop-shadow" /></div>}
+                 {user.activeBuffs.lastGasp && <div className="w-6 h-6 rounded-full bg-emerald-500/20 border border-emerald-500/50 flex items-center justify-center animate-pulse" title="Último Gás Ativo"><Zap size={12} className="text-emerald-500 drop-shadow" /></div>}
+                 {user.activeBuffs.duelWin && <div className="w-6 h-6 rounded-full bg-yellow-500/20 border border-yellow-500/50 flex items-center justify-center animate-pulse" title="Buff de Duelo (XP/Coins +15%)"><Swords size={12} className="text-yellow-500 drop-shadow" /></div>}
+                 {user.activeBuffs.duelLoss && <div className="w-6 h-6 rounded-full bg-red-500/20 border border-red-500/50 flex items-center justify-center animate-pulse" title="Nerf de Duelo (XP/Coins -15%)"><Swords size={12} className="text-red-500 drop-shadow" /></div>}
                </div>
              )}
 
@@ -1631,7 +2045,7 @@ export default function App() {
             { id: 'tasks', icon: CheckSquare, label: 'Tarefas' },
             { id: 'habits', icon: Target, label: 'Hábitos' },
             { id: 'store', icon: ShoppingCart, label: 'Loja' },
-            { id: 'ranking', icon: Trophy, label: 'Ranking' },
+            { id: 'ranking', icon: Trophy, label: 'Mundo' },
             { id: 'profile', icon: User, label: 'Perfil' }
           ].map(tab => {
             const Icon = tab.icon;
@@ -1652,6 +2066,72 @@ export default function App() {
       {toastMsg && (
         <div className={`fixed top-36 left-1/2 -translate-x-1/2 ${isDarkMode ? 'bg-zinc-800' : 'bg-zinc-800'} text-white px-6 py-3 rounded-full shadow-2xl z-[150] text-sm font-medium animate-float border border-zinc-700 whitespace-nowrap`}>
           {toastMsg}
+        </div>
+      )}
+
+      {/* MEIA-NOITE FORCE ADVANCE */}
+      {forceAdvanceModal && !isProcessingDay && (
+        <div className={`fixed inset-0 ${theme.modalBg} z-[500] flex flex-col justify-center items-center p-6 backdrop-blur-md animate-in fade-in`}>
+           <div className={`${theme.panel} border ${theme.border} p-8 rounded-3xl w-full max-w-sm text-center shadow-2xl`}>
+              <Clock size={64} className="text-indigo-500 mx-auto mb-4 animate-pulse" />
+              <h2 className={`text-2xl font-black ${theme.text} mb-2`}>Meia-noite!</h2>
+              <p className={`text-sm ${theme.textMuted} mb-6`}>Um novo dia acaba de nascer. O seu progresso de ontem será processado agora.</p>
+              <button onClick={processNextDay} className={`w-full ${theme.btnPrimary} py-4 rounded-xl font-bold transition-transform hover:scale-105`}>Avançar para Hoje</button>
+           </div>
+        </div>
+      )}
+
+      {/* SLOT MACHINE MODAL */}
+      {slotModalOpen && (
+        <div className={`fixed inset-0 ${theme.modalBg} z-[200] flex flex-col justify-center items-center p-6 backdrop-blur-md animate-in fade-in duration-300`}>
+          <div className={`${theme.panel} border-2 border-pink-500/30 rounded-3xl w-full max-w-sm shadow-[0_0_50px_rgba(236,72,153,0.15)] flex flex-col items-center p-6 animate-modal-pop`}>
+            <h2 className="text-xl font-black text-pink-500 mb-6 uppercase tracking-widest text-center">Giro da Sorte</h2>
+            
+            <div className={`flex justify-around items-center w-full ${theme.inner} border border-pink-500/30 rounded-2xl p-6 mb-8`}>
+               {slotState.reels.map((icon, idx) => (
+                  <div key={idx} className="relative w-16 h-20 bg-black/20 rounded-xl flex items-center justify-center border border-white/5 overflow-hidden shadow-inner">
+                     {slotState.active && icon === '❓' ? (
+                        <div className="animate-slot-spin text-5xl">🎰</div>
+                     ) : (
+                        <span className={`text-5xl ${slotState.result && slotState.result !== 'loss' ? 'animate-pulse' : ''}`}>{icon}</span>
+                     )}
+                  </div>
+               ))}
+            </div>
+
+            {slotState.result && slotState.result !== 'loss' && (
+                <div className="mb-6 text-center animate-in zoom-in">
+                   <p className="text-sm font-bold text-emerald-500 mb-1">VITÓRIA!</p>
+                   <h3 className="text-3xl font-black text-yellow-500">+{slotState.result.pay * slotBet} Moedas</h3>
+                </div>
+            )}
+            {slotState.result === 'loss' && (
+                <div className="mb-6 text-center animate-in zoom-in">
+                   <p className="text-sm font-bold text-red-500 mb-1">QUASE!</p>
+                   <h3 className={`text-xl font-black ${theme.textMuted}`}>Mais sorte na próxima...</h3>
+                </div>
+            )}
+
+            <button onClick={() => { setSlotModalOpen(false); setSlotState({active:false, reels:['❓','❓','❓'], result:null}); }} className={`w-full py-3 font-bold ${theme.textMuted} hover:${theme.text} transition-colors`}>
+               Sair
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* DELETE CONFIRMATION MODAL */}
+      {itemToDelete && (
+        <div className={`fixed inset-0 ${theme.modalBg} z-[300] flex flex-col justify-center items-center p-6 backdrop-blur-sm animate-in zoom-in-95 duration-200`}>
+           <div className={`${theme.panel} border border-red-500/50 p-6 rounded-3xl w-full max-w-sm shadow-2xl flex flex-col items-center`}>
+              <ShieldAlert size={48} className="text-red-500 mb-4" />
+              <h3 className={`text-xl font-bold ${theme.text} mb-2 text-center`}>Apagar {itemToDelete.type === 'task' ? 'Tarefa' : 'Hábito'}?</h3>
+              <p className={`text-sm ${theme.textMuted} mb-6 text-center`}>Ao apagar este item sem o concluir, sofrerá uma penalidade de <strong className="text-red-500">-30 XP e -10 Moedas</strong>. Tem a certeza que deseja prosseguir?</p>
+              
+              <div className="flex gap-3 w-full">
+                 <button onClick={() => setItemToDelete(null)} className={`flex-1 py-3 font-bold ${theme.textMuted} ${theme.inner} hover:${theme.panel} rounded-xl transition-colors`}>Cancelar</button>
+                 <button onClick={confirmDelete} className="flex-1 py-3 font-bold text-white bg-red-600 hover:bg-red-500 rounded-xl transition-colors shadow-[0_0_15px_rgba(220,38,38,0.4)]">Apagar e Perder XP</button>
+              </div>
+           </div>
         </div>
       )}
 
@@ -1738,10 +2218,10 @@ export default function App() {
              <p className={`text-sm ${theme.textMuted} mb-4 relative`}>Qual hábito deseja congelar hoje por 500 moedas?</p>
              
              <div className="space-y-2 mb-6 max-h-60 overflow-y-auto">
-               {habits.filter(h => !h.frozen).length === 0 ? (
+               {habits.filter(h => !h.frozen && !h.completed).length === 0 ? (
                  <p className={`text-center ${theme.textMuted} py-4`}>Nenhum hábito elegível encontrado.</p>
                ) : (
-                 habits.filter(h => !h.frozen).map(h => (
+                 habits.filter(h => !h.frozen && !h.completed).map(h => (
                    <button key={h.id} onClick={() => handleBuyFreeze(h.id)} className={`w-full text-left p-3 rounded-xl border ${theme.border} ${theme.inner} hover:${theme.panel} hover:border-cyan-500/50 transition-all text-sm ${theme.text}`}>
                      {h.title}
                    </button>
@@ -1777,24 +2257,9 @@ export default function App() {
         </div>
       )}
 
-      {/* MODAL SLOT MACHINE - DADO MÁGICO */}
-      {diceSlotActive && (
-        <div className={`fixed inset-0 ${theme.modalBg} z-[200] flex flex-col justify-center items-center p-6 backdrop-blur-md animate-in fade-in duration-300`}>
-          <div className="animate-modal-pop w-full flex flex-col items-center">
-            <h2 className="text-xl font-black text-pink-500 mb-12 uppercase tracking-widest text-center animate-pulse">A Sortear Multiplicador...</h2>
-            <div className={`${theme.panel} border-2 border-pink-500/30 rounded-[2rem] p-8 flex flex-col items-center w-full max-w-sm shadow-[0_0_50px_rgba(219,39,119,0.15)] relative overflow-hidden`}>
-               <div className="absolute inset-0 bg-gradient-to-b from-pink-500/10 to-transparent"></div>
-               <span className={`text-[120px] leading-none font-black ${theme.text} drop-shadow-lg mb-8 z-10`}>{slotDisplay.roll}</span>
-               <div className={`h-px w-full bg-gradient-to-r from-transparent via-zinc-500 to-transparent mb-8 z-10`}></div>
-               <span className="text-lg font-bold text-pink-500 text-center truncate w-full z-10 uppercase tracking-widest">{slotDisplay.title}</span>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* MODAL ÉPICO (DANO CRÍTICO ou SORTE LENDÁRIA) */}
       {epicCritModal && (
-        <div className={`fixed inset-0 ${theme.modalBg} z-[200] flex flex-col justify-center items-center p-6 backdrop-blur-md animate-epic animate-in fade-in duration-300`}>
+        <div className={`fixed inset-0 ${theme.modalBg} z-[200] flex flex-col justify-center items-center p-6 backdrop-blur-md animate-in zoom-in-105 duration-500`}>
           <div className="animate-modal-pop w-full flex flex-col items-center">
             <div className={`absolute inset-0 ${epicCritModal.type === 'crit' ? 'bg-fuchsia-500/20' : 'bg-pink-500/20'} animate-pulse mix-blend-screen pointer-events-none`}></div>
             {epicCritModal.type === 'crit' ? (
@@ -1821,6 +2286,39 @@ export default function App() {
           </div>
         </div>
       )}
+
+      {/* LOOTBOX CARDS MODAL */}
+      {lootboxCardsModal && lootboxRevealed && (
+        <div className={`fixed inset-0 ${theme.modalBg} z-[200] flex flex-col justify-center items-center p-6 backdrop-blur-md animate-in fade-in duration-300`}>
+           <h2 className="text-3xl font-black text-fuchsia-500 mb-8 uppercase tracking-widest text-center animate-pulse">Escolha uma Carta!</h2>
+           <div className="flex gap-4 w-full max-w-md justify-center">
+              {lootboxRevealed.map((card, i) => {
+                 const isRevealed = selectedLootboxCard === i;
+                 const isNotSelected = selectedLootboxCard !== null && selectedLootboxCard !== i;
+                 
+                 return (
+                     <div key={i} onClick={() => handleCardSelect(i, card)} className={`w-28 h-40 rounded-xl border ${theme.border} ${theme.panel} flex flex-col items-center justify-center shadow-xl relative cursor-pointer transition-all duration-500 ${isRevealed ? 'animate-flip-in scale-110 z-10 border-fuchsia-500 shadow-[0_0_30px_rgba(217,70,239,0.3)]' : isNotSelected ? 'opacity-50 grayscale scale-95' : 'hover:scale-105 hover:border-fuchsia-500'}`}>
+                        {selectedLootboxCard !== null ? (
+                           isRevealed ? (
+                              card.type === 'coins' ? <><Coins size={36} className="text-yellow-500 mb-2"/><span className="font-black text-yellow-600 dark:text-yellow-500">+{card.amount}</span></> :
+                              card.type === 'xp' ? <><Target size={36} className="text-emerald-500 mb-2"/><span className="font-black text-emerald-600 dark:text-emerald-500">+{card.amount} XP</span></> :
+                              <><div className="absolute inset-0 bg-amber-500/10 animate-pulse"></div><Egg size={48} className="text-amber-500 mb-2 relative z-10"/><span className="font-black text-amber-600 dark:text-amber-500 text-xs relative z-10 text-center">OVO MISTERIOSO</span></>
+                           ) : (
+                              <PackageOpen size={36} className={theme.textMuted} />
+                           )
+                        ) : (
+                           <div className={`absolute inset-0 ${isDarkMode ? 'bg-zinc-800' : 'bg-zinc-200'} flex items-center justify-center rounded-xl bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPgo8cmVjdCB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjMmQyZDNmIj48L3JlY3Q+CjxwYXRoIGQ9Ik0wIDBMOCA4Wk04IDBMMCA4WiIgc3Ryb2tlPSIjM2YzZjQ2IiBzdHJva2Utd2lkdGg9IjEiPjwvcGF0aD4KPC9zdmc+')]`}>
+                               <span className="text-4xl drop-shadow-xl">❓</span>
+                           </div>
+                        )}
+                     </div>
+                 );
+              })}
+           </div>
+           {selectedLootboxCard === null && <p className={`mt-8 ${theme.textMuted} text-sm font-medium`}>O destino aguarda a sua decisão...</p>}
+        </div>
+      )}
+
       {/* PET HATCH MODAL */}
       {eggHatchModal && (
         <div className={`fixed inset-0 ${theme.modalBg} z-[200] flex flex-col justify-center items-center p-6 backdrop-blur-md animate-in fade-in duration-500`}>
@@ -1952,74 +2450,44 @@ export default function App() {
         </div>
       )}
 
-      {/* LOOTBOX CARDS MODAL */}
-      {lootboxCardsModal && lootboxRevealed && (
-        <div className={`fixed inset-0 ${theme.modalBg} z-[200] flex flex-col justify-center items-center p-6 backdrop-blur-md animate-in fade-in duration-300`}>
-           <h2 className="text-3xl font-black text-fuchsia-500 mb-8 uppercase tracking-widest text-center animate-pulse">Escolha uma Carta!</h2>
-           <div className="flex gap-4 w-full max-w-md justify-center">
-              {lootboxRevealed.map((card, i) => {
-                 const isRevealed = selectedLootboxCard === i;
-                 const isNotSelected = selectedLootboxCard !== null && selectedLootboxCard !== i;
-                 
-                 return (
-                     <div key={i} onClick={() => handleCardSelect(i, card)} className={`w-28 h-40 rounded-xl border ${theme.border} ${theme.panel} flex flex-col items-center justify-center shadow-xl relative cursor-pointer transition-all duration-500 ${isRevealed ? 'animate-flip-in scale-110 z-10 border-fuchsia-500 shadow-[0_0_30px_rgba(217,70,239,0.3)]' : isNotSelected ? 'opacity-50 grayscale scale-95' : 'hover:scale-105 hover:border-fuchsia-500'}`}>
-                        {selectedLootboxCard !== null ? (
-                           isRevealed ? (
-                              card.type === 'coins' ? <><Coins size={36} className="text-yellow-500 mb-2"/><span className="font-black text-yellow-600 dark:text-yellow-500">+{card.amount}</span></> :
-                              card.type === 'xp' ? <><Target size={36} className="text-emerald-500 mb-2"/><span className="font-black text-emerald-600 dark:text-emerald-500">+{card.amount} XP</span></> :
-                              <><div className="absolute inset-0 bg-amber-500/10 animate-pulse"></div><Egg size={48} className="text-amber-500 mb-2 relative z-10"/><span className="font-black text-amber-600 dark:text-amber-500 text-xs relative z-10 text-center">OVO MISTERIOSO</span></>
-                           ) : (
-                              <PackageOpen size={36} className={theme.textMuted} />
-                           )
-                        ) : (
-                           <div className="absolute inset-0 bg-zinc-800 dark:bg-zinc-800 flex items-center justify-center rounded-xl bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPgo8cmVjdCB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjMmQyZDNmIj48L3JlY3Q+CjxwYXRoIGQ9Ik0wIDBMOCA4Wk04IDBMMCA4WiIgc3Ryb2tlPSIjM2YzZjQ2IiBzdHJva2Utd2lkdGg9IjEiPjwvcGF0aD4KPC9zdmc+')]">
-                               <span className="text-4xl drop-shadow-xl">❓</span>
-                           </div>
-                        )}
-                     </div>
-                 );
-              })}
-           </div>
-           {selectedLootboxCard === null && <p className={`mt-8 ${theme.textMuted} text-sm font-medium`}>O destino aguarda a sua decisão...</p>}
-        </div>
-      )}
-
       {/* DUEL RESULT MODAL */}
       {duelResultModal && (
-        <div className={`fixed inset-0 ${theme.modalBg} z-[200] flex flex-col justify-center items-center p-6 backdrop-blur-md animate-epic animate-in zoom-in duration-500`}>
-           <h2 className={`text-4xl font-black ${theme.text} mb-2 uppercase tracking-widest text-center`}>RESULTADO DO DUELO</h2>
-           <p className={`${theme.textMuted} mb-8`}>vs {duelResultModal.botName} {duelResultModal.botEmoji}</p>
-           
-           <div className="flex gap-8 items-end mb-12">
-               <div className="flex flex-col items-center gap-2">
-                  <span className={`text-sm font-bold ${theme.textMuted}`}>O seu XP</span>
-                  <span className={`text-4xl font-black ${duelResultModal.win && !duelResultModal.tie ? 'text-emerald-500' : duelResultModal.tie ? 'text-yellow-500' : 'text-red-500'}`}>{duelResultModal.userDiff}</span>
-               </div>
-               <span className={`text-2xl font-black ${theme.textMuted} pb-2`}>X</span>
-               <div className="flex flex-col items-center gap-2">
-                  <span className={`text-sm font-bold ${theme.textMuted}`}>{duelResultModal.botName}</span>
-                  <span className={`text-4xl font-black ${!duelResultModal.win && !duelResultModal.tie ? 'text-emerald-500' : duelResultModal.tie ? 'text-yellow-500' : theme.textMuted}`}>{duelResultModal.botDiff}</span>
-               </div>
+        <div className={`fixed inset-0 ${theme.modalBg} z-[200] flex flex-col justify-center items-center p-6 backdrop-blur-md animate-in zoom-in-105 duration-700 fade-in`}>
+           <div className="animate-in slide-in-from-bottom-8 fade-in duration-500 flex flex-col items-center w-full">
+             <h2 className={`text-4xl font-black ${theme.text} mb-2 uppercase tracking-widest text-center`}>RESULTADO DO DUELO</h2>
+             <p className={`${theme.textMuted} mb-8`}>vs {duelResultModal.botName} {duelResultModal.botEmoji}</p>
+             
+             <div className="flex gap-8 items-end mb-12">
+                 <div className="flex flex-col items-center gap-2">
+                    <span className={`text-sm font-bold ${theme.textMuted}`}>O seu XP</span>
+                    <span className={`text-4xl font-black ${duelResultModal.win && !duelResultModal.tie ? 'text-emerald-500' : duelResultModal.tie ? 'text-yellow-500' : 'text-red-500'}`}>{duelResultModal.userDiff}</span>
+                 </div>
+                 <span className={`text-2xl font-black ${theme.textMuted} pb-2`}>X</span>
+                 <div className="flex flex-col items-center gap-2">
+                    <span className={`text-sm font-bold ${theme.textMuted}`}>{duelResultModal.botName}</span>
+                    <span className={`text-4xl font-black ${!duelResultModal.win && !duelResultModal.tie ? 'text-emerald-500' : duelResultModal.tie ? 'text-yellow-500' : theme.textMuted}`}>{duelResultModal.botDiff}</span>
+                 </div>
+             </div>
+
+             <h1 className={`text-6xl font-black text-transparent bg-clip-text ${duelResultModal.tie ? 'bg-gradient-to-r from-yellow-500 to-orange-500' : duelResultModal.win ? 'bg-gradient-to-r from-emerald-500 to-cyan-500' : 'bg-gradient-to-r from-red-500 to-orange-500'} text-center leading-tight mb-8 uppercase drop-shadow-lg`}>
+                {duelResultModal.tie ? 'EMPATE!' : duelResultModal.win ? 'VITÓRIA!' : 'DERROTA...'}
+             </h1>
+             
+             {duelResultModal.win && !duelResultModal.tie && (
+                <div className={`${theme.panel} border border-emerald-500/50 text-emerald-600 dark:text-emerald-500 p-4 rounded-2xl mb-8 font-mono font-bold text-center shadow-lg`}>
+                   Recompensa Exclusiva:<br/>+500 XP | +200 Moedas
+                </div>
+             )}
+             {duelResultModal.tie && (
+                <div className={`${theme.panel} border border-yellow-500/50 text-yellow-600 dark:text-yellow-500 p-4 rounded-2xl mb-8 font-mono font-bold text-center shadow-lg`}>
+                   Um duelo equilibrado!<br/>Nenhum lado obteve espólios.
+                </div>
+             )}
+
+             <button onClick={() => setDuelResultModal(null)} className={`w-full max-w-xs ${theme.btnPrimary} font-black py-4 rounded-xl transition-colors hover:scale-105 duration-200`}>
+                Continuar
+             </button>
            </div>
-
-           <h1 className={`text-6xl font-black text-transparent bg-clip-text ${duelResultModal.tie ? 'bg-gradient-to-r from-yellow-500 to-orange-500' : duelResultModal.win ? 'bg-gradient-to-r from-emerald-500 to-cyan-500' : 'bg-gradient-to-r from-red-500 to-orange-500'} text-center leading-tight mb-8 uppercase drop-shadow-lg`}>
-              {duelResultModal.tie ? 'EMPATE!' : duelResultModal.win ? 'VITÓRIA!' : 'DERROTA...'}
-           </h1>
-           
-           {duelResultModal.win && !duelResultModal.tie && (
-              <div className={`${theme.panel} border border-emerald-500/50 text-emerald-600 dark:text-emerald-500 p-4 rounded-2xl mb-8 font-mono font-bold text-center shadow-lg`}>
-                 Recompensa Exclusiva:<br/>+500 XP | +200 Moedas
-              </div>
-           )}
-           {duelResultModal.tie && (
-              <div className={`${theme.panel} border border-yellow-500/50 text-yellow-600 dark:text-yellow-500 p-4 rounded-2xl mb-8 font-mono font-bold text-center shadow-lg`}>
-                 Um duelo equilibrado!<br/>Nenhum lado obteve espólios.
-              </div>
-           )}
-
-           <button onClick={() => setDuelResultModal(null)} className={`w-full max-w-xs ${theme.btnPrimary} font-black py-4 rounded-xl hover:scale-105 transition-transform`}>
-              Continuar
-           </button>
         </div>
       )}
 
@@ -2060,7 +2528,7 @@ export default function App() {
           <div className={`${theme.panel} border ${theme.border} p-8 rounded-3xl max-w-sm w-full text-center shadow-2xl relative z-10 backdrop-blur-lg animate-modal-pop`}>
             <Award size={48} className="text-emerald-500 mx-auto mb-6" />
             <h2 className={`text-3xl font-black ${theme.text} mb-2`}>Fim de Mês!</h2>
-            <p className={`${theme.textMuted} text-sm mb-8`}>Todos os dados de tarefas foram limpos. O Ranking Mensal de todos os utilizadores voltou para 0. Boa sorte nesta nova temporada!</p>
+            <p className={`${theme.textMuted} text-sm mb-8`}>O Ranking Mensal de todos os utilizadores voltou para 0 e a sua ofensiva foi resetada. Boa sorte nesta nova temporada!</p>
             {user.medals.length > 0 && (
               <div className={`mb-6 p-4 border ${theme.border} rounded-xl ${theme.inner}`}>
                 <p className={`text-xs ${theme.textMuted} uppercase font-bold mb-3`}>Última Conquista</p>
