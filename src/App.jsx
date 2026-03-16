@@ -3,7 +3,7 @@ import {
   CheckCircle, Circle, Folder, Calendar, Trophy, User, Plus, X, 
   Bell, ChevronUp, ChevronDown, Target, Zap, Clock, Star, Flame, Sparkles,
   ArrowUp, ArrowDown, Minus, ShieldAlert, Award, ShoppingCart, Snowflake, Dices, Coins, Gift, Trash2, ListTodo, RefreshCw, Hourglass, Sword, Shield,
-  Swords, Egg, Heart, Utensils, Bath, Gamepad2, PackageOpen, Hammer, Sun, Moon, Ticket, Globe, Skull, Info, Flag, Wand2, Ghost, Wind, Loader2
+  Swords, Egg, Heart, Utensils, Bath, Gamepad2, PackageOpen, Hammer, Sun, Moon, Ticket, Globe, Skull, Info, Flag, Wand2, Ghost, Wind, Loader2, PawPrint, Play, Maximize
 } from 'lucide-react';
 
 const CustomCheckSquare = (props) => (
@@ -80,24 +80,40 @@ const ParticlesBackground = ({ isDarkMode }) => {
   return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-0" />;
 };
 
+const FocusTimer = ({ endTime }) => {
+    const [left, setLeft] = useState(endTime - Date.now());
+    useEffect(() => {
+        const int = setInterval(() => setLeft(endTime - Date.now()), 1000);
+        return () => clearInterval(int);
+    }, [endTime]);
+    
+    if (left <= 0) return <span className="text-6xl text-red-500 font-mono font-black">00:00:00</span>;
+    
+    const h = Math.floor(left / 3600000);
+    const m = Math.floor((left % 3600000) / 60000);
+    const s = Math.floor((left % 60000) / 1000);
+    return <span className="text-7xl md:text-9xl text-white font-mono font-black tracking-widest drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]">
+        {String(h).padStart(2,'0')}:{String(m).padStart(2,'0')}:{String(s).padStart(2,'0')}
+    </span>
+}
+
 const CLASSES = {
-    acrobat: { id: 'acrobat', name: 'Acrobata', icon: Wind, desc: 'Bónus de XP ao concluir tarefas no prazo.', color: 'text-sky-500', bg: 'bg-sky-500/10', border: 'border-sky-500/30' },
+    acrobat: { id: 'acrobat', name: 'Acrobata', icon: Wind, desc: 'Bónus de XP em Testes de Tempo e tarefas.', color: 'text-sky-500', bg: 'bg-sky-500/10', border: 'border-sky-500/30' },
     fighter: { id: 'fighter', name: 'Lutador', icon: Swords, desc: 'Bónus massivo ao possuir um duelo ativo.', color: 'text-red-500', bg: 'bg-red-500/10', border: 'border-red-500/30' },
     illusionist: { id: 'illusionist', name: 'Ilusionista', icon: Wand2, desc: 'XP escala pela quantidade de tarefas não concluídas.', color: 'text-fuchsia-500', bg: 'bg-fuchsia-500/10', border: 'border-fuchsia-500/30' },
     thief: { id: 'thief', name: 'Ladrão', icon: Ghost, desc: 'Ganha um bónus de Moedas ao concluir tarefas.', color: 'text-yellow-500', bg: 'bg-yellow-500/10', border: 'border-yellow-500/30' }
 };
 
-const BOTS_NAMES_POOL = ['Lucas', 'Matheus', 'Tiago', 'Pedro', 'João', 'Miguel', 'Arthur', 'Gael', 'Heitor', 'Theo', 'Davi', 'Gabriel', 'Bernardo', 'Samuel', 'Enzo', 'Alice', 'Laura', 'Julia', 'Sophia', 'Isabella', 'Helena', 'Valentina', 'Sofia', 'Manuela', 'Vitória', 'John', 'Michael', 'William', 'David', 'Richard', 'Joseph', 'Thomas', 'Charles', 'Christopher', 'Daniel', 'Matthew', 'Anthony', 'Mary', 'Patricia', 'Jennifer', 'Linda', 'Elizabeth', 'Barbara', 'Susan', 'Jessica', 'Sarah', 'Karen'];
-const BOTS_TITLES_POOL = ['o Engenheiro', 'a Doutora Maluca', 'o Sábio', 'a Estrategista', 'o Ninja', 'a Valquíria', 'o Alquimista', 'a Maga', 'o Especialista', 'a Viajante', 'o Explorador', 'a Caçadora', 'o Guardião', 'a Campeã', 'a Lenda', 'a Visionária', 'o Arquiteto', 'a Comandante', 'o Mercenário', 'o Fantasma', 'o Silencioso', 'a Veloz', 'o Curioso', 'a Artista', 'o Colecionador', 'a Cientista'];
-const BOT_EMOJIS = ['🧝‍♀️', '🧛‍♂️', '🧟', '🧚‍♀️', '🧜‍♂️', '🧞‍♂️', '👽', '🤖', '🦸‍♂️', '🦹‍♀️', '🧙‍♂️', '🥷', '🧑‍🌾', '👷', '👩‍🍳', '🕵️', '💂', '🧑‍🎤', '👩‍🚀', '🤴'];
+const BOTS_NAMES_POOL = ['Lucas', 'Matheus', 'Tiago', 'Pedro', 'João', 'Miguel', 'Arthur', 'Gael', 'Heitor', 'Theo', 'Davi', 'Gabriel', 'Bernardo', 'Samuel', 'Enzo', 'Alice', 'Laura', 'Julia', 'Sophia', 'Isabella', 'Helena', 'Valentina', 'Sofia', 'Manuela', 'Vitória'];
+const BOTS_TITLES_POOL = ['Analista de Dados', 'Curador Medicinal', 'Arquiteto Solar', 'Estrategista', 'Gerente de Eventos', 'a Valquíria', 'o Alquimista', 'a Maga', 'o Especialista', 'a Viajante', 'o Explorador', 'a Caçadora', 'o Guardião', 'a Campeã', 'a Lenda', 'a Visionária'];
+const BOT_EMOJIS = ['🧝‍♀️', '🧛‍♂️', '🧟', '🧚‍♀️', '🧜‍♂️', '🧞‍♂️', '👽', '🤖', '🦸‍♂️', '🦹‍♀️', '🧙‍♂️', '🥷', '🧑‍🌾', '👷', '👩‍🍳', '🕵️'];
 const BOT_PETS = ['bat', 'penguin', 'eagle', 'parrot', 'phoenix', 'dragon'];
 const BOT_CLASS_KEYS = ['acrobat', 'fighter', 'illusionist', 'thief'];
 
 const SURPRISE_TASKS = [
-  { title: "Leia um artigo", desc: "Expanda os seus conhecimentos com uma leitura rápida hoje." },
-  { title: "Limpe a sua mesa de trabalho", desc: "Um ambiente limpo atrai uma mente clara e focada." },
-  { title: "Beba uma garrafa de água", desc: "A hidratação é a chave para manter a energia ao longo do dia." },
-  { title: "Coma uma fruta", desc: "Dê ao seu corpo as vitaminas e nutrientes que ele merece." }
+  { title: "Leia um artigo", desc: "Expanda os seus conhecimentos." },
+  { title: "Beba uma garrafa de água", desc: "A hidratação é chave." },
+  { title: "Coma uma fruta", desc: "Dê vitaminas ao seu corpo." }
 ];
 
 const SLOT_ITEMS = [ 
@@ -106,15 +122,15 @@ const SLOT_ITEMS = [
 ];
 
 const STORE_CLASSIC_ITEMS = [
-  { id: 'freeze', title: 'Congelamento', desc: 'Escolha um hábito para congelar hoje. Ele contará como concluído magicamente.', price: 500, icon: Snowflake, theme: { text: 'text-sky-500', bg: 'bg-sky-500', border: 'border-sky-500/30', hover: 'hover:bg-sky-400', shadow: 'shadow-[0_0_15px_rgba(14,165,233,0.3)]' } },
-  { id: 'bonusTask', title: 'Tarefa Bónus', desc: 'Adiciona um espaço extra reluzente. Mesmas recompensas massivas do Desafio Diário.', price: 650, icon: Gift, theme: { text: 'text-blue-500', bg: 'bg-blue-500', border: 'border-blue-500/30', hover: 'hover:bg-blue-400', shadow: 'shadow-[0_0_15px_rgba(59,130,246,0.3)]' } },
-  { id: 'magicDice', title: 'Dado Mágico', desc: 'Sorteia um multiplicador (1x a 6x) em XP e Moedas para uma tarefa ativa.', price: 700, icon: Dices, theme: { text: 'text-fuchsia-500', bg: 'bg-fuchsia-500', border: 'border-fuchsia-500/30', hover: 'hover:bg-fuchsia-400', shadow: 'shadow-[0_0_15px_rgba(217,70,239,0.3)]' } },
-  { id: 'petEgg', title: 'Ovo de Pet', desc: 'Adquira um ovo misterioso diretamente da loja para chocar um companheiro de vida.', price: 5000, icon: Egg, theme: { text: 'text-amber-500', bg: 'bg-amber-500', border: 'border-amber-500/30', hover: 'hover:bg-amber-400', shadow: 'shadow-[0_0_15px_rgba(245,158,11,0.3)]' } },
-  { id: 'lifeHammer', title: 'Martelo da Vida', desc: 'Destrua a casca do seu ovo de estimação imediatamente, ignorando hábitos.', price: 3000, icon: Hammer, theme: { text: 'text-red-500', bg: 'bg-red-500', border: 'border-red-500/30', hover: 'hover:bg-red-400', shadow: 'shadow-[0_0_15px_rgba(239,68,68,0.3)]' } },
-  { id: 'realizador', title: 'Espírito Realizador', desc: 'Prêmios em +20% hoje. Permite 1 Dano Crítico por dia (+50% Buff extra).', price: 400, icon: Sword, theme: { text: 'text-fuchsia-500', bg: 'bg-fuchsia-500', border: 'border-fuchsia-500/30', hover: 'hover:bg-fuchsia-400', shadow: 'shadow-[0_0_15px_rgba(192,38,211,0.3)]' } },
-  { id: 'resguardo', title: 'Espírito de Resguardo', desc: 'Diminui efeitos negativos ao falhar uma tarefa na virada de dia em 40%. Dura 1 dia.', price: 500, icon: Shield, theme: { text: 'text-cyan-500', bg: 'bg-cyan-500', border: 'border-cyan-500/30', hover: 'hover:bg-cyan-400', shadow: 'shadow-[0_0_15px_rgba(6,182,212,0.3)]' } },
-  { id: 'cronosMoeda', title: 'Moeda de Cronos', desc: 'Manipule o tempo. Adiciona mais 3 horas ao prazo de uma tarefa específica.', price: 250, icon: Hourglass, theme: { text: 'text-indigo-500', bg: 'bg-indigo-500', border: 'border-indigo-500/30', hover: 'hover:bg-indigo-400', shadow: 'shadow-[0_0_15px_rgba(99,102,241,0.3)]' } },
-  { id: 'cronosMedalha', title: 'Medalha de Cronos', desc: 'Magia temporal poderosa. Adiciona um dia extra ao prazo estipulado de uma tarefa.', price: 400, icon: Calendar, theme: { text: 'text-violet-500', bg: 'bg-violet-500', border: 'border-violet-500/30', hover: 'hover:bg-violet-400', shadow: 'shadow-[0_0_15px_rgba(139,92,246,0.3)]' } }
+  { id: 'freeze', title: 'Congelamento', desc: 'Congela e conclui um hábito.', price: 400, icon: Snowflake, theme: { text: 'text-sky-500', bg: 'bg-sky-500', border: 'border-sky-500/30', hover: 'hover:bg-sky-400' } },
+  { id: 'bonusTask', title: 'Tarefa Bónus', desc: 'Adiciona um espaço extra reluzente.', price: 300, icon: Gift, theme: { text: 'text-blue-500', bg: 'bg-blue-500', border: 'border-blue-500/30', hover: 'hover:bg-blue-400' } },
+  { id: 'magicDice', title: 'Dado Mágico', desc: 'Sorteia um multiplicador x1 a x6.', price: 450, icon: Dices, theme: { text: 'text-fuchsia-500', bg: 'bg-fuchsia-500', border: 'border-fuchsia-500/30', hover: 'hover:bg-fuchsia-400' } },
+  { id: 'petEgg', title: 'Ovo de Pet', desc: 'Adquira um ovo misterioso.', price: 2500, icon: Egg, theme: { text: 'text-amber-500', bg: 'bg-amber-500', border: 'border-amber-500/30', hover: 'hover:bg-amber-400' } },
+  { id: 'lifeHammer', title: 'Martelo da Vida', desc: 'Choca um ovo imediatamente.', price: 1000, icon: Hammer, theme: { text: 'text-red-500', bg: 'bg-red-500', border: 'border-red-500/30', hover: 'hover:bg-red-400' } },
+  { id: 'realizador', title: 'Espírito Realizador', desc: 'Prêmios em +20% hoje.', price: 400, icon: Sword, theme: { text: 'text-fuchsia-500', bg: 'bg-fuchsia-500', border: 'border-fuchsia-500/30', hover: 'hover:bg-fuchsia-400' } },
+  { id: 'resguardo', title: 'Espírito de Resguardo', desc: 'Reduz penalidades de tarefas em 80%.', price: 300, icon: Shield, theme: { text: 'text-cyan-500', bg: 'bg-cyan-500', border: 'border-cyan-500/30', hover: 'hover:bg-cyan-400' } },
+  { id: 'cronosMoeda', title: 'Moeda de Cronos', desc: 'Adiciona +3 horas ao prazo.', price: 100, icon: Hourglass, theme: { text: 'text-indigo-500', bg: 'bg-indigo-500', border: 'border-indigo-500/30', hover: 'hover:bg-indigo-400' } },
+  { id: 'cronosMedalha', title: 'Medalha de Cronos', desc: 'Adiciona +1 dia ao prazo.', price: 200, icon: Calendar, theme: { text: 'text-violet-500', bg: 'bg-violet-500', border: 'border-violet-500/30', hover: 'hover:bg-violet-400' } }
 ];
 
 const MEDAL_STYLES = {
@@ -213,6 +229,7 @@ export default function App() {
         if (parsed.dailyChallengeUsed === undefined) parsed.dailyChallengeUsed = false;
         if (parsed.hasBonusTaskAvailable === undefined) parsed.hasBonusTaskAvailable = false;
         if (parsed.activeDuel === undefined) parsed.activeDuel = null;
+        if (parsed.tasksTowardsLootbox === undefined) parsed.tasksTowardsLootbox = 0;
         
         if (parsed.hasCompletedOnboarding === undefined || !parsed.userClass) {
             parsed.hasCompletedOnboarding = false;
@@ -224,7 +241,7 @@ export default function App() {
     return {
       name: '', level: 1, xp: 0, monthlyXp: 0, coins: 0, vouchers: 0, lastMonthlyXp: 0, streak: 0, maxStreakThisMonth: 0, monthDaysElapsed: 0, isUser: true, medals: [],
       activeBuffs: { realizador: false, resguardo: false, criticalUsedToday: false, petBuffUsedToday: false, duelWin: false, duelLoss: false, lastGasp: false },
-      dailyTaskLimits: { p1: 0, p2: 0 }, inventory: { food: 5, soap: 5, toys: 5 }, pet: null, petBuffBonus: 0, xpTowardsLootbox: 0, dailyChallengedBots: {}, duelStats: { wins: 0, losses: 0, ties: 0 },
+      dailyTaskLimits: { p1: 0, p2: 0 }, inventory: { food: 5, soap: 5, toys: 5 }, pet: null, petBuffBonus: 0, tasksTowardsLootbox: 0, dailyChallengedBots: {}, duelStats: { wins: 0, losses: 0, ties: 0 },
       dailyGainedXp: 0, dailyGainedCoins: 0, dailyGainedVouchers: 0, records: { maxXp: 0, maxCoins: 0 }, urgencyCountThisMonth: 0, hasSeenUrgencyInfo: false,
       hasCompletedOnboarding: false, userClass: { type: 'acrobat', level: 1, xp: 0 }, debugMode: false, dailyChallengeUsed: false, hasBonusTaskAvailable: false, activeDuel: null
     };
@@ -238,6 +255,7 @@ export default function App() {
   const [tasks, setTasks] = useState(() => { const saved = localStorage.getItem('fq_tasks'); return saved ? JSON.parse(saved) : []; });
   const [habits, setHabits] = useState(() => { const saved = localStorage.getItem('fq_habits'); return saved ? JSON.parse(saved) : []; });
   const [sprints, setSprints] = useState(() => { const saved = localStorage.getItem('fq_sprints'); return saved ? JSON.parse(saved) : []; });
+  const [collapsedSprints, setCollapsedSprints] = useState([]);
 
   useEffect(() => { localStorage.setItem('fq_theme', JSON.stringify(isDarkMode)); }, [isDarkMode]);
   useEffect(() => { localStorage.setItem('fq_user', JSON.stringify(user)); }, [user]);
@@ -257,12 +275,14 @@ export default function App() {
   const [urgencyFailureModal, setUrgencyFailureModal] = useState(null); 
   const [dailySummaryModal, setDailySummaryModal] = useState(null); 
   const [urgencyInfoModal, setUrgencyInfoModal] = useState(false);
+  const [pendingDuelResult, setPendingDuelResult] = useState(null);
   
   // Onboarding States
   const [onboardingStep, setOnboardingStep] = useState(0);
   const [onboardingName, setOnboardingName] = useState(user.name || '');
   const [onboardingClass, setOnboardingClass] = useState('acrobat');
   const [onboardingDebug, setOnboardingDebug] = useState(false);
+  const [isLeavingOnboarding, setIsLeavingOnboarding] = useState(false);
 
   const isUrgentActive = tasks.some(t => t.isUrgent && !t.completed);
 
@@ -359,6 +379,11 @@ export default function App() {
   const [isBonusTask, setIsBonusTask] = useState(false);
   const [isSprintMode, setIsSprintMode] = useState(false);
   const [sprintTasksText, setSprintTasksText] = useState('');
+
+  // Estados do Teste de Tempo
+  const [isTimeTestMode, setIsTimeTestMode] = useState(false);
+  const [timeTestDuration, setTimeTestDuration] = useState(30);
+  const [focusTask, setFocusTask] = useState(null);
   
   const [newHabitText, setNewHabitText] = useState('');
   const [newHabitDesc, setNewHabitDesc] = useState(''); 
@@ -385,12 +410,56 @@ export default function App() {
     }
   }, [showDatePicker, newTaskDeadline, currentDate]);
 
+  // Intervalo global para monitorar Testes de Tempo
   useEffect(() => {
-    if (eggHatchModal && eggHatchModal.step === 'cracking') {
-       const timer = setTimeout(() => setEggHatchModal(prev => ({ ...prev, step: 'revealed' })), 3500);
-       return () => clearTimeout(timer);
-    }
-  }, [eggHatchModal]);
+    const interval = setInterval(() => {
+        const expired = tasks.find(t => t.isTimeTest && t.timeTestActive && !t.completed && Date.now() >= t.timeTestEndTime);
+        if (expired) {
+            processTimeTest(expired.id, true);
+        }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [tasks]);
+
+  const processTimeTest = (taskId, isFailure) => {
+      const task = tasks.find(t => t.id === taskId);
+      if (!task || task.completed) return;
+      
+      const isAcrobat = user.userClass?.type === 'acrobat';
+      const mod = isAcrobat ? 1.2 : 1;
+      
+      if (isFailure) {
+          const penalty = Math.floor(100 * mod);
+          addXpAndCoins(-penalty, -penalty, 0, 1);
+          showToast(`⏳ Tempo esgotado! Penalidade de ${penalty} aplicada.`);
+      } else {
+          const elapsed = Date.now() - task.timeTestStartTime;
+          const totalAllowed = task.timeTestEndTime - task.timeTestStartTime;
+          const base = (elapsed <= totalAllowed / 2) ? 100 : 80;
+          const reward = Math.floor(base * mod);
+          addXpAndCoins(reward, reward, reward, 1);
+          showToast(`⏳ Teste de Tempo concluído! +${reward} XP/Moedas.`);
+      }
+      
+      setTasks(cur => cur.map(t => t.id === taskId ? { ...t, completed: true, timeTestActive: false } : t));
+      if (focusTask && focusTask.id === taskId) setFocusTask(null);
+  };
+
+  const startTimeTest = (taskId) => {
+      if (tasks.some(t => t.timeTestActive && !t.completed)) return showToast("Já existe um Teste de Tempo ativo!");
+      let extraMins = 0;
+      if (user.pet?.type === 'eagle' && Math.random() <= 0.10) {
+          extraMins = 10;
+          showToast("🦅 A Águia concedeu +10 minutos ao teste!");
+      }
+      setTasks(cur => cur.map(t => {
+          if (t.id === taskId) {
+             const duration = t.durationMinutes || 30;
+             return { ...t, timeTestActive: true, timeTestStartTime: Date.now(), timeTestEndTime: Date.now() + (duration + extraMins) * 60000 };
+          }
+          return t;
+      }));
+  };
 
   // --- FUNÇÕES CORE ---
   const showToast = (msg) => { setToastMsg(msg); setTimeout(() => setToastMsg(''), 3500); };
@@ -398,7 +467,7 @@ export default function App() {
   const getRequiredXp = (lvl) => 500 + (lvl - 1) * 200;
   const getClassRequiredXp = (lvl) => lvl * 1000;
 
-  const addXpAndCoins = (xpAmount, coinAmount, classXpAmount = 0) => {
+  const addXpAndCoins = (xpAmount, coinAmount, classXpAmount = 0, tasksIncrement = 0) => {
     setUser(prev => {
       let newXp = prev.xp + xpAmount;
       let newMonthlyXp = Math.max(0, prev.monthlyXp + xpAmount); 
@@ -412,9 +481,9 @@ export default function App() {
       if (levelChanged === 'up') setLevelModal({ type: 'up', level: newLevel });
       else if (levelChanged === 'down') setLevelModal({ type: 'down', level: newLevel });
 
-      let newXpTowardsLootbox = prev.xpTowardsLootbox + xpAmount;
-      if (newXpTowardsLootbox >= 3000) {
-         newXpTowardsLootbox -= 3000;
+      let newTasksTowardsLootbox = (prev.tasksTowardsLootbox || 0) + tasksIncrement;
+      if (newTasksTowardsLootbox >= 15) {
+         newTasksTowardsLootbox -= 15;
          setPendingLootboxes(p => p + 1);
          addNotification("🎁 Um novo Baú de Espólios foi encontrado!");
       }
@@ -435,7 +504,7 @@ export default function App() {
 
       return { 
           ...prev, xp: newXp, monthlyXp: newMonthlyXp, level: newLevel, coins: Math.max(0, prev.coins + coinAmount), 
-          xpTowardsLootbox: newXpTowardsLootbox, dailyGainedXp: dXp, dailyGainedCoins: dCoins,
+          tasksTowardsLootbox: newTasksTowardsLootbox, dailyGainedXp: dXp, dailyGainedCoins: dCoins,
           userClass: { ...prev.userClass, xp: newClassXp, level: newClassLvl }
       };
     });
@@ -505,7 +574,7 @@ export default function App() {
     let p1Count = user.dailyTaskLimits?.p1 || 0;
     let p2Count = user.dailyTaskLimits?.p2 || 0;
     
-    if (!isDailyChallenge && !isBonusTask) {
+    if (!isDailyChallenge && !isBonusTask && !isTimeTestMode) {
         if (finalPriority === 'P1') p1Count++;
         if (finalPriority === 'P2') p2Count++;
     }
@@ -523,7 +592,9 @@ export default function App() {
       deadline: newTaskDeadline || null, deadlineTime: newTaskTime || null,
       recurring: newTaskRecurring, priority: finalPriority,
       isDailyChallenge, isBonusTask, boost: 1, ageInDays: 0, glowAnimation: false, rewardToast: null,
-      isUrgent: false, urgencyDeadline: null, isSurprise: false
+      isUrgent: false, urgencyDeadline: null, isSurprise: false,
+      isTimeTest: isTimeTestMode, durationMinutes: isTimeTestMode ? timeTestDuration : null,
+      timeTestActive: false, timeTestStartTime: null, timeTestEndTime: null
     }, ...tasks]); 
     
     setUser(prev => ({...prev, dailyTaskLimits: { p1: p1Count, p2: p2Count }}));
@@ -531,7 +602,7 @@ export default function App() {
 
     setNewTaskText(''); setNewTaskDesc(''); setNewTaskDeadline(''); setNewTaskTime(''); 
     setNewTaskRecurring([]); setNewTaskPriority('P4');
-    setIsDailyChallenge(false); setIsBonusTask(false);
+    setIsDailyChallenge(false); setIsBonusTask(false); setIsTimeTestMode(false); setTimeTestDuration(30);
   };
 
   const toggleSprintTask = (sprintId, taskId) => {
@@ -547,7 +618,7 @@ export default function App() {
         });
         
         let sprintNowCompleted = newTasks.every(t => t.completed) && !s.completed;
-        if (justCompletedTask) addXpAndCoins(50, 50, 50); 
+        if (justCompletedTask) addXpAndCoins(50, 50, 50, 1); 
         
         if (sprintNowCompleted) {
             let rewardXp = 0, rewardCoins = 0;
@@ -599,13 +670,42 @@ export default function App() {
      return { multXp, multCoins, triggered, petEmoji, extraMsg };
   };
 
+  const interactWithPet = (actionType) => {
+     if (actionType === 'love') {
+        setUser(p => ({...p, pet: {...p.pet, love: Math.min(100, (p.pet.love || 0) + 15)}}));
+        showToast("O seu pet adora o seu carinho! ❤️");
+        return;
+     }
+     
+     const inventoryKey = actionType === 'food' ? 'food' : actionType === 'clean' ? 'soap' : 'toys';
+     if ((user.inventory?.[inventoryKey] || 0) <= 0) return showToast("Não tem itens suficientes! Compre na loja.");
+     
+     setUser(p => ({
+       ...p, 
+       inventory: {...p.inventory, [inventoryKey]: p.inventory[inventoryKey] - 1},
+       pet: {...p.pet, [actionType]: Math.min(100, (p.pet[actionType] || 0) + 30)}
+     }));
+     showToast("Interação concluída! 🌟");
+  };
+
   const toggleTask = (id) => {
     setTasks(currentTasks => currentTasks.map(t => {
       if (t.id === id) {
+        if (t.isTimeTest) {
+            if (!t.timeTestActive && !t.completed) {
+                showToast("Inicie o Teste de Tempo para a concluir!");
+                return t;
+            }
+            if (t.timeTestActive && !t.completed) {
+                processTimeTest(t.id, false);
+                return t;
+            }
+        }
+
         const isCompleting = !t.completed;
         if (isCompleting) {
           if (t.isSurprise) {
-              addXpAndCoins(100, 100, 0); 
+              addXpAndCoins(100, 100, 0, 1); 
               setMonthlyStats(prev => ({...prev, tasks: prev.tasks + 1}));
               setTimeout(() => { setTasks(tasksAfter => tasksAfter.map(task => task.id === id ? { ...task, glowAnimation: false, rewardToast: null } : task)); }, 2500);
               return { ...t, completed: true, glowAnimation: 'pet-glow', rewardToast: `🎁 Surpresa Concluída! +100 XP | +100 Moedas` };
@@ -682,7 +782,7 @@ export default function App() {
 
           if (isLate) { finalXP = Math.floor(finalXP / 2); finalCoins = Math.floor(finalCoins / 2); }
 
-          addXpAndCoins(finalXP, finalCoins, finalClassXp); 
+          addXpAndCoins(finalXP, finalCoins, finalClassXp, 1); 
           setMonthlyStats(prev => ({...prev, tasks: prev.tasks + 1}));
           setTimeout(() => { setTasks(tasksAfter => tasksAfter.map(task => task.id === id ? { ...task, glowAnimation: false, rewardToast: null } : task)); }, 2500);
 
@@ -724,17 +824,17 @@ export default function App() {
                  showToast("Tarefa Surpresa descartada sem penalidade.");
                  setItemToDelete(null); return;
              }
-             if (task.priority === 'P1' && !task.isDailyChallenge && !task.isBonusTask) {
+             if (task.priority === 'P1' && !task.isDailyChallenge && !task.isBonusTask && !task.isTimeTest) {
                  setUser(prev => ({...prev, dailyTaskLimits: { ...prev.dailyTaskLimits, p1: Math.max(0, (prev.dailyTaskLimits?.p1 || 0) - 1) }}));
-             } else if (task.priority === 'P2') {
+             } else if (task.priority === 'P2' && !task.isTimeTest) {
                  setUser(prev => ({...prev, dailyTaskLimits: { ...prev.dailyTaskLimits, p2: Math.max(0, (prev.dailyTaskLimits?.p2 || 0) - 1) }}));
              }
-             addXpAndCoins(-30, -10, 0); 
+             addXpAndCoins(-30, -10, 0, 0); 
              setTasks(currentTasks => currentTasks.filter(t => t.id !== task.id));
              showToast("Tarefa abandonada. Penalidade aplicada.");
          }
      } else {
-         addXpAndCoins(-30, -10, 0);
+         addXpAndCoins(-30, -10, 0, 0);
          setHabits(currentHabits => currentHabits.filter(h => h.id !== itemToDelete.id));
          showToast("Hábito abandonado. Penalidade aplicada.");
      }
@@ -753,7 +853,7 @@ export default function App() {
   };
 
   const processHabitCompletion = () => {
-     addXpAndCoins(50, 0, 50); 
+     addXpAndCoins(50, 0, 50, 0); 
      setMonthlyStats(prev => ({...prev, habits: prev.habits + 1}));
      setUser(prev => {
         if (prev.pet && prev.pet.type === 'egg') {
@@ -804,16 +904,16 @@ export default function App() {
     handleBuyItem(() => {
       setHabits(currentHabits => currentHabits.map(h => h.id === habitId ? { ...h, frozen: true, completed: true } : h));
       processHabitCompletion(); setFreezeModalOpen(false);
-    }, 500, "Hábito congelado e concluído!");
+    }, 400, "Hábito congelado e concluído!");
   };
 
   const handleBuyBonusTask = () => {
     if (user.hasBonusTaskAvailable) return showToast("Já possui uma Tarefa Bónus!");
-    handleBuyItem(() => setUser(prev => ({ ...prev, hasBonusTaskAvailable: true })), 650, "Tarefa Bónus desbloqueada!");
+    handleBuyItem(() => setUser(prev => ({ ...prev, hasBonusTaskAvailable: true })), 300, "Tarefa Bónus desbloqueada!");
   };
 
   const handleBuyBuff = (type) => {
-    const cost = type === 'realizador' ? 400 : 500;
+    const cost = type === 'realizador' ? 400 : 300;
     if (user.activeBuffs[type]) return showToast(`Espírito já está ativo!`);
     handleBuyItem(() => setUser(prev => ({ ...prev, activeBuffs: { ...prev.activeBuffs, [type]: true } })), cost, `O Espírito fluí em si!`);
   };
@@ -824,7 +924,7 @@ export default function App() {
 
   const handleBuyPetEgg = () => {
       if (user.pet) return showToast("Você já possui um companheiro ou ovo!");
-      handleBuyItem(() => setUser(prev => ({ ...prev, pet: { type: 'egg', strikes: 0 } })), 5000, "Ovo de Pet Adquirido!");
+      handleBuyItem(() => setUser(prev => ({ ...prev, pet: { type: 'egg', strikes: 0 } })), 2500, "Ovo de Pet Adquirido!");
   };
 
   const handleBuyLifeHammer = () => {
@@ -834,7 +934,7 @@ export default function App() {
           if (user.level >= 30 && Math.random() < 0.25) possiblePets = Math.random() > 0.5 ? ['phoenix'] : ['dragon'];
           const hatchedType = possiblePets[Math.floor(Math.random() * possiblePets.length)];
           setEggHatchModal({ type: hatchedType, step: 'cracking' });
-      }, 3000, "Martelo utilizado!");
+      }, 1000, "Martelo utilizado!");
   };
 
   const applyCronosToTask = (taskId) => {
@@ -853,24 +953,24 @@ export default function App() {
         }
         return t;
      }));
-     setUser(prev => ({ ...prev, coins: prev.coins - (cronosModalOpen === 'moeda' ? 250 : 400) }));
+     setUser(prev => ({ ...prev, coins: prev.coins - (cronosModalOpen === 'moeda' ? 100 : 200) }));
      showToast(`Prazo estendido!`); setCronosModalOpen(null);
   };
 
   const openCronosModal = (type) => {
-     const cost = type === 'moeda' ? 250 : 400;
+     const cost = type === 'moeda' ? 100 : 200;
      if (user.coins < cost) return showToast("Moedas insuficientes!");
-     const activeTasks = tasks.filter(t => !t.completed && !t.recurring?.length && !t.isSurprise);
+     const activeTasks = tasks.filter(t => !t.completed && !t.recurring?.length && !t.isSurprise && !t.isTimeTest);
      if (activeTasks.length === 0) return showToast("Nenhuma tarefa elegível!");
      setCronosModalOpen(type);
   };
 
   const handleBuyMagicDice = () => {
-    if (user.coins < 700) return showToast("Moedas insuficientes!");
+    if (user.coins < 450) return showToast("Moedas insuficientes!");
     const activeTasks = tasks.filter(t => !t.completed && !t.isSurprise);
     if (activeTasks.length === 0) return showToast("Sem tarefas ativas!");
 
-    setUser(prev => ({ ...prev, coins: prev.coins - 700 }));
+    setUser(prev => ({ ...prev, coins: prev.coins - 450 }));
     const roll = Math.floor(Math.random() * 6) + 1;
     let weightedTasks = [];
     activeTasks.forEach(t => {
@@ -907,13 +1007,13 @@ export default function App() {
          setUser(p => ({...p, vouchers: p.vouchers - 10, petBuffBonus: (p.petBuffBonus || 0) + 0.05}));
          showToast("Buff permanente do Pet melhorado em 5%!");
      } else if (type === 'lootbox') {
-         if (user.vouchers < 10) return showToast("Vouchers insuficientes!");
-         setUser(p => ({...p, vouchers: p.vouchers - 10}));
+         if (user.vouchers < 5) return showToast("Vouchers insuficientes!");
+         setUser(p => ({...p, vouchers: p.vouchers - 5}));
          openLootbox(true);
      } else if (type === 'lastGasp') {
-         if (user.vouchers < 15) return showToast("Vouchers insuficientes!");
+         if (user.vouchers < 7) return showToast("Vouchers insuficientes!");
          if (user.activeBuffs.lastGasp) return showToast("Último Gás já está ativo!");
-         setUser(p => ({...p, vouchers: p.vouchers - 15, activeBuffs: {...p.activeBuffs, lastGasp: true}}));
+         setUser(p => ({...p, vouchers: p.vouchers - 7, activeBuffs: {...p.activeBuffs, lastGasp: true}}));
          showToast("Último Gás Ativado! XP/Moedas a dobrar hoje.");
      }
   };
@@ -953,7 +1053,7 @@ export default function App() {
           setSlotState({ active: false, reels: finalReels, result: isWin ? finalPrizeObj : 'loss' });
           if (isWin) {
              const payout = finalPrizeObj.pay * slotBet;
-             addXpAndCoins(0, payout, 0);
+             addXpAndCoins(0, payout, 0, 0);
              showToast(`🎉 Ganhou ${payout} Moedas!`);
           }
       }, 3500);
@@ -990,8 +1090,8 @@ export default function App() {
       if (selectedLootboxCard !== null) return; 
       setSelectedLootboxCard(index);
 
-      if(card.type === 'coins') addXpAndCoins(0, card.amount, 0);
-      if(card.type === 'xp') addXpAndCoins(card.amount, 0, 0);
+      if(card.type === 'coins') addXpAndCoins(0, card.amount, 0, 0);
+      if(card.type === 'xp') addXpAndCoins(card.amount, 0, 0, 0);
       if(card.type === 'egg') setUser(p => ({...p, pet: { type: 'egg', strikes: 0 }}));
 
       setTimeout(() => setLootboxCardsModal(false), 3000);
@@ -1122,7 +1222,7 @@ export default function App() {
           if (newGlobalStreak === 23) newFeed.push({ id: Math.random(), type: 'streak', text: `Você atingiu uma ofensiva de Ouro!`, icon: '🔥' });
         } else if (unfrozenHabits.length > 0) {
           let penalty = Math.max(100, 300 - (newGlobalStreak * 10)); 
-          if (user.activeBuffs.resguardo) penalty = Math.floor(penalty * 0.6);
+          if (user.activeBuffs.resguardo) penalty = Math.floor(penalty * 0.2); // 80% de proteção (sofre apenas 20%)
           
           let fenixSaved = false;
           if (user.pet && user.pet.type === 'phoenix' && !user.pet.isDead && !user.phoenixUsedThisMonth) {
@@ -1130,7 +1230,7 @@ export default function App() {
              setUser(p => ({...p, phoenixUsedThisMonth: true}));
              addNotification("🐦‍🔥 A Fênix ressuscitou a sua ofensiva das cinzas!");
           } else {
-             addXpAndCoins(-penalty, 0, 0); 
+             addXpAndCoins(-penalty, 0, 0, 0); 
              newGlobalStreak = 0;
           }
         }
@@ -1145,7 +1245,7 @@ export default function App() {
             const win = userDiff > botDiff; const tie = userDiff === botDiff;
             
             if (win && !tie) {
-                addXpAndCoins(500, 200, 0); 
+                addXpAndCoins(500, 200, 0, 0); 
                 setUser(prev => ({...prev, duelStats: { ...prev.duelStats, wins: (prev.duelStats?.wins || 0) + 1 }}));
                 nextDayDuelWin = true; bot.activeBuffs.duelLoss = true;
                 newFeed.push({ id: Math.random(), type: 'duel', text: `Você aniquilou ${bot.name} num duelo!`, icon: '⚔️' });
@@ -1156,7 +1256,7 @@ export default function App() {
                 nextDayDuelLoss = true; bot.activeBuffs.duelWin = true;
                 newFeed.push({ id: Math.random(), type: 'duel', text: `${bot.name} derrotou-o num duelo!`, icon: '⚔️' });
             }
-            setDuelResultModal({ botName: user.activeDuel.botName, botEmoji: user.activeDuel.botEmoji, win, tie, userDiff, botDiff });
+            setPendingDuelResult({ botName: user.activeDuel.botName, botEmoji: user.activeDuel.botEmoji, win, tie, userDiff, botDiff });
         }
         
         newBots = newBots.map(bot => {
@@ -1213,7 +1313,7 @@ export default function App() {
               if (t.recurring && t.recurring.includes(nextDate.getDay())) {
                  updatedTask = { ...updatedTask, completed: false, glowAnimation: false, rewardToast: null, isLate: false, isCrit: false, isPetBuff: false, isUrgent: false, urgencyDeadline: null };
               }
-              if (!t.deadline && (!t.recurring || t.recurring.length === 0) && !t.completed && !t.isSurprise) {
+              if (!t.deadline && (!t.recurring || t.recurring.length === 0) && !t.completed && !t.isSurprise && !t.isTimeTest) {
                  updatedTask.ageInDays = (updatedTask.ageInDays || 0) + 1;
               }
               return updatedTask;
@@ -1225,7 +1325,7 @@ export default function App() {
               modifiedTasks.unshift({
                   id: Date.now() + 1000, title: st.title, description: st.desc, folder: 'Geral', completed: false,
                   deadline: `${nY}-${nM}-${nD}`, deadlineTime: '23:59', recurring: [], priority: 'P4', 
-                  isSurprise: true, boost: 1, ageInDays: 0, glowAnimation: false, rewardToast: null, isUrgent: false
+                  isSurprise: true, boost: 1, ageInDays: 0, glowAnimation: false, rewardToast: null, isUrgent: false, isTimeTest: false
               });
           }
           return modifiedTasks;
@@ -1284,7 +1384,7 @@ export default function App() {
   // --- RENDERIZAÇÃO DE TELAS ---
   if (!user.hasCompletedOnboarding) {
     return (
-        <div className={`fixed inset-0 bg-zinc-950 text-white z-[5000] flex flex-col justify-center items-center p-6 transition-all duration-500`}>
+        <div className={`fixed inset-0 bg-zinc-950 text-white z-[5000] flex flex-col justify-center items-center p-6 transition-all duration-500 ${isLeavingOnboarding ? 'opacity-0' : 'opacity-100'}`}>
             {onboardingStep === 0 && (
                 <div className="max-w-md w-full text-center animate-in fade-in slide-in-from-bottom-8 duration-700">
                     <div className="w-24 h-24 bg-emerald-500/20 border border-emerald-500 rounded-full flex items-center justify-center mx-auto mb-8 shadow-[0_0_30px_rgba(16,185,129,0.3)]">
@@ -1309,7 +1409,7 @@ export default function App() {
                         </div>
                         <div className="bg-zinc-900 border border-zinc-800 p-4 rounded-2xl flex items-center gap-4 text-left">
                            <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center text-blue-500"><PackageOpen size={24}/></div>
-                           <div><h4 className="font-bold">Lootboxes</h4><p className="text-xs text-zinc-400">Ganhe baús a cada 3000 XP adquirido.</p></div>
+                           <div><h4 className="font-bold">Lootboxes</h4><p className="text-xs text-zinc-400">Ganhe baús e recompensas raras no seu progresso.</p></div>
                         </div>
                     </div>
                     <button onClick={() => setOnboardingStep(2)} className="w-full bg-emerald-500 text-white font-black py-4 rounded-xl hover:bg-emerald-400 transition-transform hover:scale-105">Continuar</button>
@@ -1346,6 +1446,7 @@ export default function App() {
                        onClick={() => {
                           if(!onboardingName.trim()) return showToast("Por favor, digite o seu nome.");
                           setOnboardingStep(3);
+                          setTimeout(() => setIsLeavingOnboarding(true), 2500);
                           setTimeout(() => {
                               setUser(p => ({ ...p, name: onboardingName.trim(), hasCompletedOnboarding: true, debugMode: onboardingDebug, userClass: { type: onboardingClass, level: 1, xp: 0 } }));
                           }, 3000);
@@ -1397,18 +1498,23 @@ export default function App() {
         <h3 className={`text-lg font-semibold mb-4 ${theme.text} flex flex-wrap gap-2 items-center justify-between`}>
           Adicionar {isSprintMode ? 'Sprint 🏁' : 'Tarefa'}
           <div className="flex gap-2">
-            <button onClick={() => { setIsSprintMode(!isSprintMode); setIsDailyChallenge(false); setIsBonusTask(false); setNewTaskRecurring([]); }} className={`text-[10px] px-3 py-1 rounded-full border transition-all flex items-center gap-1 ${isSprintMode ? 'sprint-gradient text-white animate-shimmer shadow-[0_0_15px_rgba(20,184,166,0.3)] border-transparent' : `${theme.inner} ${theme.textMuted} ${theme.border} hover:text-emerald-500`}`}>
-               <Flag size={12} /> Modo Sprint
+            <button onClick={() => { setIsSprintMode(!isSprintMode); setIsDailyChallenge(false); setIsBonusTask(false); setIsTimeTestMode(false); setNewTaskRecurring([]); }} className={`text-[10px] px-3 py-1 rounded-full border transition-all flex items-center gap-1 ${isSprintMode ? 'sprint-gradient text-white animate-shimmer shadow-[0_0_15px_rgba(20,184,166,0.3)] border-transparent' : `${theme.inner} ${theme.textMuted} ${theme.border} hover:text-emerald-500`}`}>
+               <Flag size={12} /> Sprint
             </button>
 
             {!isSprintMode && !user.dailyChallengeUsed && (
-              <button onClick={() => { setIsDailyChallenge(!isDailyChallenge); setIsBonusTask(false); setNewTaskRecurring([]); }} className={`text-[10px] px-3 py-1 rounded-full border transition-all flex items-center gap-1 ${isDailyChallenge ? 'fuchsia-gradient text-white animate-shimmer shadow-[0_0_15px_rgba(217,70,239,0.5)] border-transparent' : `${theme.inner} ${theme.textMuted} ${theme.border} hover:text-fuchsia-500`}`}>
-                <Sparkles size={12} /> Desafio Diário
+              <button onClick={() => { setIsDailyChallenge(!isDailyChallenge); setIsBonusTask(false); setIsTimeTestMode(false); setNewTaskRecurring([]); }} className={`text-[10px] px-3 py-1 rounded-full border transition-all flex items-center gap-1 ${isDailyChallenge ? 'fuchsia-gradient text-white animate-shimmer shadow-[0_0_15px_rgba(217,70,239,0.5)] border-transparent' : `${theme.inner} ${theme.textMuted} ${theme.border} hover:text-fuchsia-500`}`}>
+                <Sparkles size={12} /> Desafio
               </button>
             )}
             {!isSprintMode && user.hasBonusTaskAvailable && (
-              <button onClick={() => { setIsBonusTask(!isBonusTask); setIsDailyChallenge(false); setNewTaskRecurring([]); }} className={`text-[10px] px-3 py-1 rounded-full border transition-all flex items-center gap-1 ${isBonusTask ? 'blue-gradient text-white animate-shimmer shadow-[0_0_15px_rgba(59,130,246,0.5)] border-transparent' : `${theme.inner} text-blue-500 ${theme.border} hover:text-blue-600`}`}>
+              <button onClick={() => { setIsBonusTask(!isBonusTask); setIsDailyChallenge(false); setIsTimeTestMode(false); setNewTaskRecurring([]); }} className={`text-[10px] px-3 py-1 rounded-full border transition-all flex items-center gap-1 ${isBonusTask ? 'blue-gradient text-white animate-shimmer shadow-[0_0_15px_rgba(59,130,246,0.5)] border-transparent' : `${theme.inner} text-blue-500 ${theme.border} hover:text-blue-600`}`}>
                 <Gift size={12} /> Bônus
+              </button>
+            )}
+            {!isSprintMode && !isDailyChallenge && !isBonusTask && (
+              <button onClick={() => { setIsTimeTestMode(!isTimeTestMode); }} className={`text-[10px] px-3 py-1 rounded-full border transition-all flex items-center gap-1 ${isTimeTestMode ? 'bg-amber-500/20 border-amber-500/50 text-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.3)]' : `${theme.inner} ${theme.textMuted} ${theme.border} hover:text-amber-500`}`}>
+                <Hourglass size={12} /> Tempo
               </button>
             )}
           </div>
@@ -1428,10 +1534,18 @@ export default function App() {
            </div>
         ) : (
            <div className="space-y-3 animate-in fade-in">
-             <input type="text" placeholder={(isDailyChallenge || isBonusTask) ? "Qual é o grande objetivo?" : "O que precisa ser feito?"} value={newTaskText} onChange={(e) => setNewTaskText(e.target.value)} className={`w-full ${theme.inner} border rounded-xl px-4 py-3 ${theme.text} placeholder-zinc-500 focus:outline-none transition-colors ${isDailyChallenge ? 'border-fuchsia-500/50' : isBonusTask ? 'border-blue-500/50' : theme.border}`} />
+             <input type="text" placeholder={(isDailyChallenge || isBonusTask || isTimeTestMode) ? "Qual é o grande objetivo?" : "O que precisa ser feito?"} value={newTaskText} onChange={(e) => setNewTaskText(e.target.value)} className={`w-full ${theme.inner} border rounded-xl px-4 py-3 ${theme.text} placeholder-zinc-500 focus:outline-none transition-colors ${isDailyChallenge ? 'border-fuchsia-500/50' : isBonusTask ? 'border-blue-500/50' : isTimeTestMode ? 'border-amber-500/50' : theme.border}`} />
              <textarea placeholder="Descrição detalhada (opcional)..." value={newTaskDesc} maxLength={800} onChange={(e) => setNewTaskDesc(e.target.value)} className={`w-full ${theme.inner} border ${theme.border} rounded-xl px-4 py-3 text-sm ${theme.text} placeholder-zinc-500 focus:outline-none resize-none h-20`}></textarea>
              
-             {!(isDailyChallenge || isBonusTask) && (
+             {isTimeTestMode && (
+                <div className={`flex items-center gap-3 ${theme.inner} border border-amber-500/50 rounded-xl px-4 py-3 shadow-[inset_0_0_10px_rgba(245,158,11,0.1)]`}>
+                   <Hourglass size={16} className="text-amber-500" />
+                   <span className={`text-sm ${theme.textMuted}`}>Duração do Foco (minutos):</span>
+                   <input type="number" min="1" max="180" value={timeTestDuration} onChange={e => setTimeTestDuration(Math.max(1, parseInt(e.target.value) || 1))} className={`w-20 bg-transparent text-amber-500 font-bold text-center focus:outline-none border-b border-amber-500/50 ml-auto`} />
+                </div>
+             )}
+
+             {!(isDailyChallenge || isBonusTask || isTimeTestMode) && (
                <div className="flex gap-2 mb-2">
                  {[ { id: 'P1', xp: 50, coins: 60, color: 'text-red-500', bg: 'bg-red-500/10', border: 'border-red-500/30', active: 'bg-red-500/20 border-red-500 shadow-[inset_0_0_10px_rgba(239,68,68,0.2)]', disabled: p1LimitReached },
                    { id: 'P2', xp: 40, coins: 50, color: 'text-orange-500', bg: 'bg-orange-500/10', border: 'border-orange-500/30', active: 'bg-orange-500/20 border-orange-500', disabled: p2LimitReached },
@@ -1447,12 +1561,12 @@ export default function App() {
              )}
 
              <div className="flex flex-col sm:flex-row gap-2">
-               <div onClick={() => setShowDatePicker(true)} className={`flex-1 flex items-center ${theme.inner} border rounded-xl px-4 py-3 transition-all cursor-pointer ${isDailyChallenge ? 'border-fuchsia-500/50 shadow-[inset_0_0_10px_rgba(217,70,239,0.1)]' : isBonusTask ? 'border-blue-500/50 shadow-[inset_0_0_10px_rgba(59,130,246,0.1)]' : `${theme.border} hover:border-emerald-500/50`} group`}>
+               <div onClick={() => setShowDatePicker(true)} className={`flex-1 flex items-center ${theme.inner} border rounded-xl px-4 py-3 transition-all cursor-pointer ${isDailyChallenge ? 'border-fuchsia-500/50 shadow-[inset_0_0_10px_rgba(217,70,239,0.1)]' : isBonusTask ? 'border-blue-500/50 shadow-[inset_0_0_10px_rgba(59,130,246,0.1)]' : isTimeTestMode ? 'border-amber-500/50' : `${theme.border} hover:border-emerald-500/50`} group`}>
                  <Calendar size={16} className={`${newTaskDeadline ? 'text-emerald-500' : `${theme.textMuted} group-hover:text-emerald-500`} mr-2 flex-shrink-0 transition-colors`} />
                  <span className={`text-sm ${newTaskDeadline ? theme.text + ' font-medium' : theme.textMuted}`}>{newTaskDeadline ? formatDate(newTaskDeadline) : 'Sem Data'}</span>
                </div>
                
-               <div onClick={() => setShowTimePicker(true)} className={`flex-1 flex items-center ${theme.inner} border rounded-xl px-4 py-3 transition-all cursor-pointer ${isDailyChallenge ? 'border-fuchsia-500/50 shadow-[inset_0_0_10px_rgba(217,70,239,0.1)]' : isBonusTask ? 'border-blue-500/50 shadow-[inset_0_0_10px_rgba(59,130,246,0.1)]' : `${theme.border} hover:border-amber-500/50`} group`}>
+               <div onClick={() => setShowTimePicker(true)} className={`flex-1 flex items-center ${theme.inner} border rounded-xl px-4 py-3 transition-all cursor-pointer ${isDailyChallenge ? 'border-fuchsia-500/50 shadow-[inset_0_0_10px_rgba(217,70,239,0.1)]' : isBonusTask ? 'border-blue-500/50 shadow-[inset_0_0_10px_rgba(59,130,246,0.1)]' : isTimeTestMode ? 'border-amber-500/50' : `${theme.border} hover:border-amber-500/50`} group`}>
                  <Clock size={16} className={`${newTaskTime ? 'text-amber-500' : `${theme.textMuted} group-hover:text-amber-500`} mr-2 flex-shrink-0 transition-colors`} />
                  <span className={`text-sm ${newTaskTime ? theme.text + ' font-medium' : theme.textMuted}`}>{newTaskTime ? newTaskTime : 'Sem Hora'}</span>
                </div>
@@ -1472,8 +1586,8 @@ export default function App() {
              )}
 
              <div className="pt-2">
-               <button onClick={addTask} className={`w-full py-4 rounded-xl font-black transition-all flex items-center justify-center gap-2 ${isDailyChallenge ? 'bg-gradient-to-r from-fuchsia-600 to-purple-600 shadow-[0_0_15px_rgba(217,70,239,0.4)] text-white hover:scale-[1.02]' : isBonusTask ? 'bg-gradient-to-r from-blue-600 to-cyan-600 shadow-[0_0_15px_rgba(59,130,246,0.4)] text-white hover:scale-[1.02]' : theme.btnPrimary}`}>
-                 <Plus size={18} /> Criar Tarefa
+               <button onClick={addTask} className={`w-full py-4 rounded-xl font-black transition-all flex items-center justify-center gap-2 ${isDailyChallenge ? 'bg-gradient-to-r from-fuchsia-600 to-purple-600 shadow-[0_0_15px_rgba(217,70,239,0.4)] text-white hover:scale-[1.02]' : isBonusTask ? 'bg-gradient-to-r from-blue-600 to-cyan-600 shadow-[0_0_15px_rgba(59,130,246,0.4)] text-white hover:scale-[1.02]' : isTimeTestMode ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-[0_0_15px_rgba(245,158,11,0.4)]' : theme.btnPrimary}`}>
+                 {isTimeTestMode ? <Hourglass size={18}/> : <Plus size={18} />} Criar Tarefa
                </button>
              </div>
            </div>
@@ -1492,14 +1606,18 @@ export default function App() {
            const nowStr = `${yyyy}-${mm}-${dd}`;
            const daysLeft = Math.ceil((new Date(sprint.deadline) - new Date(nowStr)) / (1000 * 60 * 60 * 24));
            const isClose = daysLeft <= 2 && daysLeft >= 0 && !sprint.completed;
+           const isCollapsed = collapsedSprints.includes(sprint.id);
 
            return (
-              <div key={sprint.id} className={`${theme.panel} border ${isClose ? 'border-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.3)]' : sprint.completed ? 'border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.1)]' : 'border-teal-500/50'} rounded-2xl p-5 mb-4`}>
+              <div key={sprint.id} className={`${theme.panel} border ${isClose ? 'border-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.3)]' : sprint.completed ? 'border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.1)]' : 'border-teal-500/50'} rounded-2xl p-5 mb-4 transition-all`}>
                  <div className="flex justify-between items-start mb-4">
-                    <div>
+                    <div className="flex-1">
                        <div className="flex items-center gap-2 mb-1">
                           <Flag size={18} className={sprint.completed ? 'text-emerald-500' : 'text-teal-500'} />
                           <h4 className={`text-lg font-bold ${sprint.completed ? 'text-emerald-500' : theme.text}`}>{sprint.title}</h4>
+                          <button onClick={() => setCollapsedSprints(p => p.includes(sprint.id) ? p.filter(x=>x!==sprint.id) : [...p, sprint.id])} className={`ml-auto p-1 rounded-full ${theme.inner} ${theme.textMuted} hover:${theme.text} transition-colors`}>
+                             {isCollapsed ? <ChevronDown size={16}/> : <ChevronUp size={16}/>}
+                          </button>
                        </div>
                        <div className="flex gap-2 items-center">
                           <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/30`}>{sprint.distance}</span>
@@ -1508,9 +1626,10 @@ export default function App() {
                                {daysLeft < 0 ? 'Atrasada!' : `${daysLeft} dias restantes`}
                              </span>
                           )}
+                          <span className={`text-[10px] ${theme.textMuted}`}>{doneCount}/{totalCount} Concluídas</span>
                        </div>
                     </div>
-                    {sprint.completed && <Award size={32} className="text-emerald-500 drop-shadow-md" />}
+                    {sprint.completed && !isCollapsed && <Award size={32} className="text-emerald-500 drop-shadow-md ml-4" />}
                  </div>
 
                  <div className={`w-full ${theme.inner} h-2 rounded-full overflow-hidden border ${theme.border} mb-4 relative`}>
@@ -1518,16 +1637,18 @@ export default function App() {
                     <div className={`h-full transition-all duration-1000 ${sprint.completed ? 'bg-emerald-500' : 'bg-teal-500'}`} style={{ width: `${pct}%` }} />
                  </div>
 
-                 <div className="space-y-2 pl-2 border-l-2 border-zinc-200 dark:border-zinc-800 ml-2">
-                    {sprint.tasks.map(t => (
-                       <div key={t.id} className="flex items-start gap-2">
-                          <button onClick={() => toggleSprintTask(sprint.id, t.id)} disabled={sprint.completed} className={`mt-0.5 ${t.completed ? 'text-emerald-500' : theme.textMuted} flex-shrink-0 transition-colors`}>
-                             {t.completed ? <CheckCircle size={14} /> : <Circle size={14} />}
-                          </button>
-                          <span className={`text-sm ${t.completed ? `line-through ${theme.textMuted}` : theme.text}`}>{t.text}</span>
-                       </div>
-                    ))}
-                 </div>
+                 {!isCollapsed && (
+                    <div className="space-y-2 pl-2 border-l-2 border-zinc-200 dark:border-zinc-800 ml-2 animate-in fade-in duration-300">
+                       {sprint.tasks.map(t => (
+                          <div key={t.id} className="flex items-start gap-2">
+                             <button onClick={() => toggleSprintTask(sprint.id, t.id)} disabled={sprint.completed} className={`mt-0.5 ${t.completed ? 'text-emerald-500' : theme.textMuted} flex-shrink-0 transition-colors`}>
+                                {t.completed ? <CheckCircle size={14} /> : <Circle size={14} />}
+                             </button>
+                             <span className={`text-sm ${t.completed ? `line-through ${theme.textMuted}` : theme.text}`}>{t.text}</span>
+                          </div>
+                       ))}
+                    </div>
+                 )}
               </div>
            );
         })}
@@ -1545,6 +1666,7 @@ export default function App() {
             if (task.isSurprise) { pStyles = { text: 'text-purple-500', bg: 'bg-purple-500/10', border: 'border-purple-500/30', cardBg: 'surprise-gradient shadow-md', xp: 100, coins: 100, label: 'SURPRESA' }; }
             else if (task.isDailyChallenge) { pStyles = { text: isDarkMode ? 'text-white' : 'text-fuchsia-900', bg: isDarkMode ? 'bg-black/30' : 'bg-white/50', border: 'border-transparent', cardBg: 'fuchsia-gradient animate-shimmer shadow-[0_0_15px_rgba(217,70,239,0.15)]', xp: 150, coins: 80, label: 'DESAFIO' }; }
             else if (task.isBonusTask) { pStyles = { text: isDarkMode ? 'text-white' : 'text-blue-900', bg: isDarkMode ? 'bg-black/30' : 'bg-white/50', border: 'border-transparent', cardBg: 'blue-gradient animate-shimmer shadow-[0_0_15px_rgba(59,130,246,0.15)]', xp: 150, coins: 80, label: 'BÔNUS' }; }
+            else if (task.isTimeTest) { pStyles = { text: 'text-amber-500', bg: 'bg-amber-500/10', border: 'border-amber-500/50', cardBg: `${theme.panel} border-amber-500/50 shadow-[inset_0_0_15px_rgba(245,158,11,0.05)]`, xp: 80, coins: 80, label: 'TESTE DE TEMPO' }; }
             else if (task.priority === 'P1') pStyles = { text: 'text-red-500', bg: 'bg-red-500/10', border: 'border-red-500/30', cardBg: theme.panel, xp: 50, coins: 60, label: 'P1' };
             else if (task.priority === 'P2') pStyles = { text: 'text-orange-500', bg: 'bg-orange-500/10', border: 'border-orange-500/30', cardBg: theme.panel, xp: 40, coins: 50, label: 'P2' };
             else if (task.priority === 'P3') pStyles = { text: 'text-yellow-500', bg: 'bg-yellow-500/10', border: 'border-yellow-500/30', cardBg: theme.panel, xp: 30, coins: 40, label: 'P3' };
@@ -1552,7 +1674,7 @@ export default function App() {
 
             const hasBoost = task.boost > 1;
             const lossPercent = Math.min(80, (task.ageInDays || 0) * 10);
-            const isDepreciating = !task.deadline && (!task.recurring || task.recurring.length === 0) && lossPercent > 0 && !task.isSurprise;
+            const isDepreciating = !task.deadline && (!task.recurring || task.recurring.length === 0) && lossPercent > 0 && !task.isSurprise && !task.isTimeTest;
             const cardAnimationClass = task.glowAnimation ? (task.glowAnimation === 'pet-glow' ? 'animate-pet-glow' : 'animate-card-glow') : '';
 
             return (
@@ -1569,7 +1691,7 @@ export default function App() {
                    </div>
                 )}
 
-                <button onClick={() => toggleTask(task.id)} className={`mt-1 ${task.completed ? 'text-emerald-500' : (task.isDailyChallenge || task.isBonusTask) ? (isDarkMode ? 'text-white/70' : 'text-black/50') : task.isSurprise ? 'text-purple-500' : theme.textMuted} flex-shrink-0 transition-colors`}>
+                <button onClick={() => toggleTask(task.id)} className={`mt-1 ${task.completed ? 'text-emerald-500' : (task.isDailyChallenge || task.isBonusTask) ? (isDarkMode ? 'text-white/70' : 'text-black/50') : task.isSurprise ? 'text-purple-500' : theme.textMuted} flex-shrink-0 transition-colors relative z-10`}>
                   {task.completed ? <CheckCircle className={task.isSurprise ? "text-purple-500" : "text-emerald-500"} /> : <Circle />}
                 </button>
                 <div className="flex-1 overflow-hidden">
@@ -1577,6 +1699,26 @@ export default function App() {
                     {(task.isDailyChallenge || task.isBonusTask) && !task.completed && <Sparkles size={14} className={`${isDarkMode ? 'text-white' : 'text-black/50'} animate-pulse flex-shrink-0`} />}
                     <p className={`text-sm ${task.completed ? `line-through ${theme.textMuted}` : theme.text} ${(task.isDailyChallenge || task.isBonusTask) ? 'font-bold' : ''}`}>{task.title}</p>
                     
+                    {task.isTimeTest && !task.completed && (
+                        <div className="flex items-center gap-1 ml-1 relative z-10">
+                            {!task.timeTestActive ? (
+                                <button onClick={(e) => { e.stopPropagation(); startTimeTest(task.id); }} className="bg-amber-500/20 hover:bg-amber-500/40 text-amber-500 p-1 rounded transition-colors" title="Iniciar Timer">
+                                    <Play size={12} fill="currentColor"/>
+                                </button>
+                            ) : (
+                                <button onClick={(e) => { e.stopPropagation(); setFocusTask(task); }} className="bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-500 p-1 rounded transition-colors" title="Ver Foco">
+                                    <Maximize size={12} />
+                                </button>
+                            )}
+                        </div>
+                    )}
+
+                    {task.isTimeTest && task.timeTestActive && !task.completed && (
+                        <span className="text-[10px] font-mono font-bold text-amber-500 bg-amber-500/10 border border-amber-500/30 px-1.5 py-0.5 rounded ml-1 animate-pulse">
+                            EM ANDAMENTO
+                        </span>
+                    )}
+
                     {task.isSurprise && !task.completed && <span className="text-[9px] bg-purple-500/20 text-purple-600 dark:text-purple-400 border border-purple-500/50 px-1.5 py-0.5 rounded flex items-center gap-1 animate-pulse"><Gift size={8}/> Limitada</span>}
                     {isDepreciating && !task.completed && <span className={`text-[9px] bg-red-500/10 text-red-500 px-1.5 py-0.5 rounded border border-red-500/30 ml-2 animate-pulse`}>Valor: {100 - lossPercent}%</span>}
                     {activeFolder === 'Todas' && <span className={`text-[9px] ${theme.inner} ${theme.textMuted} border ${theme.border} px-1.5 py-0.5 rounded flex items-center gap-1`}><Folder size={8}/> {task.folder}</span>}
@@ -1588,6 +1730,13 @@ export default function App() {
 
                   <div className="flex items-center gap-2 mt-2 flex-wrap">
                     <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${pStyles.bg} ${pStyles.text}`}>{pStyles.label}</span>
+                    
+                    {task.isTimeTest && !task.completed && (
+                        <span className={`text-[10px] text-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/30 flex items-center gap-1`}>
+                            <Hourglass size={10} /> {task.durationMinutes} mins
+                        </span>
+                    )}
+
                     {task.deadline && <span className={`text-[10px] ${theme.textMuted} ${theme.inner} border ${theme.border} px-1.5 py-0.5 rounded flex items-center gap-1`}><Calendar size={10} /> {formatDate(task.deadline)}</span>}
                     {task.deadlineTime && <span className={`text-[10px] ${task.isLate ? 'text-red-500 bg-red-500/10 border-red-500/30' : `${theme.textMuted} ${theme.inner} border ${theme.border}`} px-1.5 py-0.5 rounded flex items-center gap-1`}><Clock size={10} /> {task.deadlineTime}</span>}
                     {task.recurring && task.recurring.length > 0 && <span className="text-[10px] text-emerald-600 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/30 flex items-center gap-1"><RefreshCw size={10} /> Recorrente</span>}
@@ -1599,7 +1748,7 @@ export default function App() {
                     {hasBoost && !task.completed && <span className="text-[10px] font-black bg-gradient-to-r from-yellow-400 to-amber-500 text-black px-2 py-0.5 rounded animate-float shadow-sm">{task.boost}x BOOST</span>}
                   </div>
                 </div>
-                <button onClick={() => handleDeleteClick(task.id, 'task')} className={`p-2 rounded-lg ${(task.isDailyChallenge || task.isBonusTask) ? (isDarkMode ? 'text-white/50' : 'text-black/50') : theme.textMuted} hover:text-red-500`}><X size={16} /></button>
+                <button onClick={() => handleDeleteClick(task.id, 'task')} className={`p-2 rounded-lg ${(task.isDailyChallenge || task.isBonusTask) ? (isDarkMode ? 'text-white/50' : 'text-black/50') : theme.textMuted} hover:text-red-500 relative z-10`}><X size={16} /></button>
               </div>
             );
           })
@@ -1625,13 +1774,10 @@ export default function App() {
             <input type="text" placeholder="Qual é o hábito? (Ex: Beber Água)" value={newHabitText} onChange={(e) => setNewHabitText(e.target.value)} className={`w-full ${theme.inner} border ${theme.border} rounded-xl px-4 py-3 ${theme.text} placeholder-zinc-500 focus:outline-none`} />
             <textarea placeholder="Descrição (opcional)..." value={newHabitDesc} maxLength={800} onChange={(e) => setNewHabitDesc(e.target.value)} className={`w-full ${theme.inner} border ${theme.border} rounded-xl px-4 py-3 text-sm ${theme.text} placeholder-zinc-500 focus:outline-none resize-none h-16`}></textarea>
             <div className="flex flex-col sm:flex-row gap-2">
-              
-              {/* HABIT TYPE SELECTION FIXED UI */}
               <div className={`flex flex-1 ${theme.inner} border ${theme.border} rounded-xl p-1`}>
                  <button onClick={() => setNewHabitType('single')} className={`flex-1 py-2 text-sm font-bold rounded-lg transition-colors ${newHabitType === 'single' ? theme.btnPrimary : theme.textMuted}`}>Check Único</button>
                  <button onClick={() => setNewHabitType('count')} className={`flex-1 py-2 text-sm font-bold rounded-lg transition-colors ${newHabitType === 'count' ? theme.btnPrimary : theme.textMuted}`}>Contagem Diária</button>
               </div>
-
               {newHabitType === 'count' && <input type="number" min="2" max="100" value={newHabitTarget} onChange={(e) => setNewHabitTarget(parseInt(e.target.value))} className={`w-full sm:w-20 ${theme.inner} border ${theme.border} rounded-xl px-4 py-3 ${theme.text} text-center focus:outline-none`} />}
               <button onClick={addHabit} className={`w-full sm:w-auto px-6 py-3 sm:py-0 rounded-xl font-bold transition-colors ${theme.btnPrimary}`}>Criar</button>
             </div>
@@ -1719,7 +1865,7 @@ export default function App() {
              </h2>
           </div>
           <div className={`bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border border-emerald-500/30 p-4 rounded-2xl flex flex-col justify-center shadow-inner`}>
-             <p className="text-emerald-600 dark:text-emerald-500 text-[10px] font-bold uppercase tracking-wider mb-1">Vouchers (Premium)</p>
+             <p className="text-emerald-600 dark:text-emerald-500 text-[10px] font-bold uppercase tracking-wider mb-1">Vouchers</p>
              <h2 className={`text-3xl font-black ${theme.text} flex items-center gap-2`}>
                {user.vouchers} <Ticket size={24} className="text-emerald-500" />
              </h2>
@@ -1749,10 +1895,10 @@ export default function App() {
               </div>
               <div className="flex-1">
                 <h3 className={`text-lg font-bold ${theme.text} mb-1`}>Lootbox Instantânea</h3>
-                <p className={`text-xs ${theme.textMuted} leading-relaxed`}>Não quer esperar pelos 3000 XP? Compre uma Lootbox e tente a sorte agora mesmo.</p>
+                <p className={`text-xs ${theme.textMuted} leading-relaxed`}>Não quer esperar para completar as 15 tarefas? Compre uma Lootbox e tente a sorte agora mesmo.</p>
               </div>
               <button onClick={() => buyVoucherItem('lootbox')} className="w-full sm:w-auto bg-fuchsia-500 hover:bg-fuchsia-400 text-white font-bold py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-all shadow-[0_0_15px_rgba(217,70,239,0.3)]">
-                10 <Ticket size={16} />
+                5 <Ticket size={16} />
               </button>
             </div>
 
@@ -1765,7 +1911,7 @@ export default function App() {
                 <p className={`text-xs ${theme.textMuted} leading-relaxed`}>Ativa um multiplicador x2 em TODAS as tarefas concluídas no dia de hoje.</p>
               </div>
               <button onClick={() => buyVoucherItem('lastGasp')} disabled={user.activeBuffs.lastGasp} className={`w-full sm:w-auto font-bold py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-all ${user.activeBuffs.lastGasp ? `${theme.inner} ${theme.textMuted}` : 'bg-yellow-500 hover:bg-yellow-400 text-white shadow-[0_0_15px_rgba(234,179,8,0.3)]'}`}>
-                {user.activeBuffs.lastGasp ? 'Ativo' : <><Ticket size={16} /> 15</>}
+                {user.activeBuffs.lastGasp ? 'Ativo' : <><Ticket size={16} /> 7</>}
               </button>
             </div>
 
@@ -1776,7 +1922,7 @@ export default function App() {
               </div>
               <div className="flex-1 z-10">
                 <h3 className={`text-lg font-bold ${theme.text} mb-1`}>Giro da Sorte</h3>
-                <p className={`text-xs ${theme.textMuted} leading-relaxed`}>O Cassino Vouchers. Arrisque para multiplicar os ganhos. Prémio máximo: Diamante (3000 Moedas).</p>
+                <p className={`text-xs ${theme.textMuted} leading-relaxed`}>Arrisque seus suados vouchers em uma roleta de cassino. Prémio máximo: Diamante (3000 Moedas).</p>
                 <div className="flex items-center gap-2 mt-2">
                    <span className="text-[10px] uppercase font-bold text-pink-500">Aposta:</span>
                    {[1,2,3,4,5].map(v => (
@@ -1794,25 +1940,7 @@ export default function App() {
       <h2 className={`text-sm font-black ${theme.textMuted} uppercase tracking-widest mb-4 flex items-center gap-2`}><Coins size={16}/> Loja Clássica</h2>
 
       <div className="grid gap-4">
-        {/* PET CARE ITEMS */}
-        {user.pet && user.pet.type !== 'egg' && !user.pet.isDead && (
-          <div className={`${theme.panel} border border-amber-500/30 p-4 rounded-2xl flex flex-wrap gap-2 items-center justify-between shadow-[inset_0_0_20px_rgba(217,119,6,0.1)]`}>
-             <div className="flex-1 w-full sm:w-auto text-center sm:text-left mb-2 sm:mb-0">
-                <h3 className="text-sm font-bold text-amber-500 flex items-center gap-1"><ShoppingCart size={14}/> Pet Shop</h3>
-             </div>
-             <button onClick={() => buyPetItem('food')} className={`flex-1 ${theme.inner} border ${theme.border} ${theme.text} hover:${theme.panel} py-2 px-3 rounded-lg text-xs transition-colors flex flex-col items-center`}>
-                <Utensils size={16} className="text-amber-500 mb-1"/> <span>10 <Coins size={10} className="inline"/></span>
-             </button>
-             <button onClick={() => buyPetItem('soap')} className={`flex-1 ${theme.inner} border ${theme.border} ${theme.text} hover:${theme.panel} py-2 px-3 rounded-lg text-xs transition-colors flex flex-col items-center`}>
-                <Bath size={16} className="text-cyan-500 mb-1"/> <span>10 <Coins size={10} className="inline"/></span>
-             </button>
-             <button onClick={() => buyPetItem('toys')} className={`flex-1 ${theme.inner} border ${theme.border} ${theme.text} hover:${theme.panel} py-2 px-3 rounded-lg text-xs transition-colors flex flex-col items-center`}>
-                <Gamepad2 size={16} className="text-pink-500 mb-1"/> <span>10 <Coins size={10} className="inline"/></span>
-             </button>
-          </div>
-        )}
-
-        {/* STORE ITEMS LOOP - WITH HARCODED TAILWIND CLASSES */}
+        {/* STORE ITEMS LOOP */}
         {STORE_CLASSIC_ITEMS.map(i => {
            const Icon = i.icon;
            let disabled = false; let action = null;
@@ -1999,7 +2127,7 @@ export default function App() {
             <button onClick={processNextDay} className={`flex-1 ${theme.inner} hover:${theme.panel} ${theme.text} py-2 px-3 rounded-lg text-sm border ${theme.border} whitespace-nowrap`}>Virar Dia</button>
             <button onClick={simulateNextMonth} className={`flex-1 ${theme.inner} hover:${theme.panel} ${theme.text} py-2 px-3 rounded-lg text-sm border ${theme.border} whitespace-nowrap`}>Virar Mês</button>
             
-            <button onClick={() => { addXpAndCoins(0, 10000, 0); showToast("+10000 Moedas!"); }} className="flex-1 bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-600 dark:text-yellow-500 py-2 px-3 rounded-lg text-sm border border-yellow-500/30 whitespace-nowrap flex items-center justify-center gap-1">
+            <button onClick={() => { addXpAndCoins(0, 10000, 0, 0); showToast("+10000 Moedas!"); }} className="flex-1 bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-600 dark:text-yellow-500 py-2 px-3 rounded-lg text-sm border border-yellow-500/30 whitespace-nowrap flex items-center justify-center gap-1">
               +10K <Coins size={14} />
             </button>
             <button onClick={() => setUser(p => ({...p, vouchers: p.vouchers + 50}))} className="flex-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-500 py-2 px-3 rounded-lg text-sm border border-emerald-500/30 whitespace-nowrap flex items-center justify-center gap-1">
@@ -2015,7 +2143,7 @@ export default function App() {
                   <option value="phoenix">Fênix</option>
                   <option value="dragon">Dragão</option>
                </select>
-               <button onClick={() => setUser(p => ({...p, pet: { type: debugPetSelect, food: 100, fun: 100, clean: 100, love: 100, isDead: false }}))} className={`flex-1 ${theme.btnPrimary} py-2 rounded-lg text-sm`}>Set Pet</button>
+               <button onClick={() => setUser(p => ({...p, pet: { type: debugPetSelect, customName: "Dev Pet", food: 100, fun: 100, clean: 100, love: 100, isDead: false }}))} className={`flex-1 ${theme.btnPrimary} py-2 rounded-lg text-sm`}>Set Pet</button>
             </div>
 
             <button onClick={() => { if(!triggerUrgency()) showToast("Sem tarefas válidas para urgência!"); }} className="w-full bg-orange-500/10 hover:bg-orange-500/20 text-orange-600 dark:text-orange-500 py-2 px-3 rounded-lg text-sm border border-orange-500/30 whitespace-nowrap flex items-center justify-center gap-1 mt-2">
@@ -2127,6 +2255,20 @@ export default function App() {
       <GlobalStyles />
       <ParticlesBackground isDarkMode={isDarkMode} />
 
+      {/* FOCUS OVERLAY */}
+      {focusTask && (
+        <div className="fixed inset-0 bg-zinc-950 z-[9999] flex flex-col items-center justify-center animate-in fade-in">
+           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-zinc-800 to-zinc-950 opacity-50 animate-pulse-fast"></div>
+           <div className="relative z-10 flex flex-col items-center justify-center w-full px-6">
+              <h2 className="text-2xl md:text-4xl text-amber-500 font-bold mb-12 text-center drop-shadow-[0_0_10px_rgba(245,158,11,0.3)]">{focusTask.title}</h2>
+              <FocusTimer endTime={focusTask.timeTestEndTime} />
+              <button onClick={() => setFocusTask(null)} className="mt-16 px-8 py-4 rounded-full border-2 border-zinc-700 text-zinc-400 hover:text-white hover:bg-zinc-800 hover:border-zinc-500 transition-all font-bold tracking-widest uppercase">
+                  Sair do Foco
+              </button>
+           </div>
+        </div>
+      )}
+
       {/* TELA DE PROCESSAMENTO DA NOITE */}
       {isProcessingDay && (
          <div className={`fixed inset-0 ${theme.bg} z-[1000] flex flex-col justify-center items-center p-6 animate-in fade-in`}>
@@ -2232,10 +2374,10 @@ export default function App() {
              )}
           </div>
           
-          {/* Barra de XP Global */}
+          {/* Barra de XP Global e Contador de Lootbox */}
           <div className={`w-full ${theme.inner} h-1.5 rounded-full overflow-hidden border ${theme.border} mt-1 relative`}>
             <div className="bg-emerald-500 h-full transition-all duration-1000 ease-out" style={{ width: `${(user.xp / getRequiredXp(user.level)) * 100}%` }} />
-            <div className="absolute top-0 bottom-0 left-0 bg-fuchsia-500 h-full transition-all duration-500 opacity-50" style={{ width: `${(user.xpTowardsLootbox / 3000) * 100}%` }}></div>
+            <div className="absolute top-0 bottom-0 left-0 bg-fuchsia-500 h-full transition-all duration-500 opacity-50" style={{ width: `${((user.tasksTowardsLootbox || 0) / 15) * 100}%` }}></div>
           </div>
         </div>
       </header>
@@ -2326,7 +2468,7 @@ export default function App() {
         </div>
       )}
 
-      {/* MODAL: RESUMO DIÁRIO */}
+      {/* MODAL: RESUMO DIÁRIO (E SEQUÊNCIA DO DUELO) */}
       {dailySummaryModal && (
         <div className={`fixed inset-0 ${theme.modalBg} z-[400] flex flex-col justify-center items-center p-6 backdrop-blur-md animate-in fade-in duration-300`}>
            <div className={`${theme.panel} border ${theme.border} p-8 rounded-3xl w-full max-w-sm shadow-2xl relative overflow-hidden animate-modal-pop`}>
@@ -2355,8 +2497,121 @@ export default function App() {
                  </div>
               </div>
               
-              <button onClick={() => setDailySummaryModal(null)} className={`w-full ${theme.btnPrimary} font-bold py-4 rounded-xl`}>Excelente!</button>
+              <button onClick={() => {
+                 setDailySummaryModal(null);
+                 if (pendingDuelResult) {
+                    setDuelResultModal(pendingDuelResult);
+                    setPendingDuelResult(null);
+                 }
+              }} className={`w-full ${theme.btnPrimary} font-bold py-4 rounded-xl`}>Excelente!</button>
            </div>
+        </div>
+      )}
+
+      {/* MODAL DE RESULTADO DO DUELO (Renderizado APÓS o Resumo) */}
+      {duelResultModal && (
+        <div className={`fixed inset-0 ${theme.modalBg} z-[600] flex justify-center items-center p-6 backdrop-blur-md animate-in fade-in duration-300`}>
+          <div className={`${theme.panel} border-2 ${duelResultModal.win ? 'border-emerald-500/50 shadow-[0_0_50px_rgba(16,185,129,0.3)]' : duelResultModal.tie ? 'border-yellow-500/50 shadow-[0_0_50px_rgba(234,179,8,0.3)]' : 'border-red-500/50 shadow-[0_0_50px_rgba(239,68,68,0.3)]'} p-8 rounded-3xl w-full max-w-sm text-center relative overflow-hidden animate-modal-pop`}>
+             <div className="flex justify-center mb-6">
+                <Swords size={64} className={`${duelResultModal.win ? 'text-emerald-500' : duelResultModal.tie ? 'text-yellow-500' : 'text-red-500'} animate-bounce`} />
+             </div>
+             
+             <h2 className={`text-3xl font-black mb-2 uppercase tracking-widest ${duelResultModal.win ? 'text-emerald-500' : duelResultModal.tie ? 'text-yellow-500' : 'text-red-500'}`}>
+                {duelResultModal.win ? 'VITÓRIA!' : duelResultModal.tie ? 'EMPATE!' : 'DERROTA!'}
+             </h2>
+             
+             <p className={`text-sm ${theme.textMuted} mb-6`}>
+                O duelo contra {duelResultModal.botName} {duelResultModal.botEmoji} chegou ao fim.
+             </p>
+
+             <div className={`flex justify-between items-center ${theme.inner} p-4 rounded-2xl mb-8`}>
+                <div className="flex flex-col items-center">
+                   <span className="text-[10px] font-bold text-zinc-500 mb-1 uppercase">Sua Pontuação</span>
+                   <span className={`text-2xl font-black ${duelResultModal.win ? 'text-emerald-500' : theme.text}`}>{duelResultModal.userDiff}</span>
+                </div>
+                <div className="w-px h-10 bg-zinc-700/50 mx-2"></div>
+                <div className="flex flex-col items-center">
+                   <span className="text-[10px] font-bold text-zinc-500 mb-1 uppercase">Adversário</span>
+                   <span className={`text-2xl font-black ${!duelResultModal.win && !duelResultModal.tie ? 'text-red-500' : theme.text}`}>{duelResultModal.botDiff}</span>
+                </div>
+             </div>
+
+             <button onClick={() => setDuelResultModal(null)} className={`w-full py-4 font-bold rounded-xl text-white transition-all hover:scale-105 ${duelResultModal.win ? 'bg-emerald-600 hover:bg-emerald-500' : duelResultModal.tie ? 'bg-yellow-600 hover:bg-yellow-500' : 'bg-red-600 hover:bg-red-500'}`}>
+                Continuar
+             </button>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: PET CARE (INTERAÇÃO COM O PET) */}
+      {petCareModal && user.pet && user.pet.type !== 'egg' && (
+        <div className={`fixed inset-0 ${theme.modalBg} z-[200] flex justify-center items-center p-6 backdrop-blur-sm animate-in fade-in duration-300`}>
+          <div className={`${theme.panel} border ${theme.border} p-8 rounded-3xl w-full max-w-sm shadow-2xl relative overflow-hidden animate-modal-pop`}>
+            <div className="absolute top-0 right-0 p-4 opacity-5"><PawPrint size={100}/></div>
+            
+            <div className="flex justify-between items-start mb-6 relative z-10">
+               <div>
+                  <h3 className={`text-xl font-bold ${theme.text}`}>{user.pet.customName || PET_TYPES[user.pet.type]?.name}</h3>
+                  <p className={`text-xs ${theme.textMuted}`}>{PET_TYPES[user.pet.type]?.name}</p>
+               </div>
+               <button onClick={() => setPetCareModal(false)} className={`p-2 ${theme.textMuted} hover:${theme.text} ${theme.inner} rounded-full transition-colors`}><X size={16}/></button>
+            </div>
+
+            <div className="flex justify-center mb-8 relative z-10">
+               <div className={`w-32 h-32 ${theme.inner} rounded-full border-2 border-amber-500/50 flex flex-col items-center justify-center shadow-[0_0_30px_rgba(245,158,11,0.2)] animate-float`}>
+                  <span className="text-6xl drop-shadow-xl">{PET_TYPES[user.pet.type]?.emoji}</span>
+               </div>
+            </div>
+
+            <div className="space-y-4 mb-8 relative z-10">
+               <div className="flex items-center gap-3">
+                  <Utensils size={16} className="text-amber-500"/>
+                  <div className={`flex-1 h-3 ${theme.inner} rounded-full overflow-hidden border ${theme.border}`}>
+                     <div className="bg-amber-500 h-full transition-all" style={{ width: `${user.pet.food || 0}%` }}></div>
+                  </div>
+                  <button onClick={() => interactWithPet('food')} className="bg-amber-500 hover:bg-amber-400 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg shadow-sm">Alimentar</button>
+               </div>
+               
+               <div className="flex items-center gap-3">
+                  <Bath size={16} className="text-cyan-500"/>
+                  <div className={`flex-1 h-3 ${theme.inner} rounded-full overflow-hidden border ${theme.border}`}>
+                     <div className="bg-cyan-500 h-full transition-all" style={{ width: `${user.pet.clean || 0}%` }}></div>
+                  </div>
+                  <button onClick={() => interactWithPet('clean')} className="bg-cyan-500 hover:bg-cyan-400 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg shadow-sm">Limpar</button>
+               </div>
+
+               <div className="flex items-center gap-3">
+                  <Gamepad2 size={16} className="text-pink-500"/>
+                  <div className={`flex-1 h-3 ${theme.inner} rounded-full overflow-hidden border ${theme.border}`}>
+                     <div className="bg-pink-500 h-full transition-all" style={{ width: `${user.pet.fun || 0}%` }}></div>
+                  </div>
+                  <button onClick={() => interactWithPet('fun')} className="bg-pink-500 hover:bg-pink-400 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg shadow-sm">Brincar</button>
+               </div>
+
+               <div className="flex items-center gap-3">
+                  <Heart size={16} className="text-red-500"/>
+                  <div className={`flex-1 h-3 ${theme.inner} rounded-full overflow-hidden border ${theme.border}`}>
+                     <div className="bg-red-500 h-full transition-all" style={{ width: `${user.pet.love || 0}%` }}></div>
+                  </div>
+                  <button onClick={() => interactWithPet('love')} className="bg-red-500 hover:bg-red-400 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg shadow-sm">Carinho</button>
+               </div>
+            </div>
+
+            <div className={`flex justify-around ${theme.inner} border ${theme.border} p-3 rounded-xl relative z-10`}>
+               <div className="flex flex-col items-center text-xs">
+                  <span className="font-bold text-amber-500">{user.inventory?.food || 0}</span>
+                  <span className={theme.textMuted}>Rações</span>
+               </div>
+               <div className="flex flex-col items-center text-xs">
+                  <span className="font-bold text-cyan-500">{user.inventory?.soap || 0}</span>
+                  <span className={theme.textMuted}>Sabões</span>
+               </div>
+               <div className="flex flex-col items-center text-xs">
+                  <span className="font-bold text-pink-500">{user.inventory?.toys || 0}</span>
+                  <span className={theme.textMuted}>Brinquedos</span>
+               </div>
+            </div>
+          </div>
         </div>
       )}
 
@@ -2643,7 +2898,6 @@ export default function App() {
            )}
         </div>
       )}
-
     </div>
   );
 }
