@@ -2161,6 +2161,40 @@ export default function App() {
          </div>
       </div>
 
+     {user.pet && user.pet.type !== 'egg' && !user.pet.isDead && (
+        <div className="mb-8">
+           <h2 className={`text-sm font-black ${theme.textMuted} uppercase tracking-widest mb-4 flex items-center gap-2`}><PawPrint size={16}/> Pet Shop</h2>
+           <div className="grid grid-cols-3 gap-3">
+              {/* Ração */}
+              <div className={`${theme.panel} border ${theme.border} p-3 rounded-2xl flex flex-col items-center text-center gap-2 shadow-sm`}>
+                 <div className="w-10 h-10 bg-amber-500/20 text-amber-500 rounded-full flex items-center justify-center"><Utensils size={18}/></div>
+                 <span className={`text-xs font-bold ${theme.text}`}>Ração</span>
+                 <button onClick={() => buyPetItem('food')} className="w-full bg-amber-500 hover:bg-amber-400 text-white text-[10px] font-bold py-2 rounded-lg flex items-center justify-center gap-1 transition-transform hover:scale-105">
+                    10 <Coins size={10}/>
+                 </button>
+              </div>
+              
+              {/* Sabão */}
+              <div className={`${theme.panel} border ${theme.border} p-3 rounded-2xl flex flex-col items-center text-center gap-2 shadow-sm`}>
+                 <div className="w-10 h-10 bg-cyan-500/20 text-cyan-500 rounded-full flex items-center justify-center"><Bath size={18}/></div>
+                 <span className={`text-xs font-bold ${theme.text}`}>Sabão</span>
+                 <button onClick={() => buyPetItem('soap')} className="w-full bg-cyan-500 hover:bg-cyan-400 text-white text-[10px] font-bold py-2 rounded-lg flex items-center justify-center gap-1 transition-transform hover:scale-105">
+                    10 <Coins size={10}/>
+                 </button>
+              </div>
+              
+              {/* Brinquedos */}
+              <div className={`${theme.panel} border ${theme.border} p-3 rounded-2xl flex flex-col items-center text-center gap-2 shadow-sm`}>
+                 <div className="w-10 h-10 bg-pink-500/20 text-pink-500 rounded-full flex items-center justify-center"><Gamepad2 size={18}/></div>
+                 <span className={`text-xs font-bold ${theme.text}`}>Brinquedo</span>
+                 <button onClick={() => buyPetItem('toys')} className="w-full bg-pink-500 hover:bg-pink-400 text-white text-[10px] font-bold py-2 rounded-lg flex items-center justify-center gap-1 transition-transform hover:scale-105">
+                    10 <Coins size={10}/>
+                 </button>
+              </div>
+           </div>
+        </div>
+      )}
+
       <h2 className={`text-sm font-black ${theme.textMuted} uppercase tracking-widest mb-4 flex items-center gap-2`}><Coins size={16}/> Loja Clássica</h2>
 
       <div className="grid gap-4">
