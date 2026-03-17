@@ -5,6 +5,9 @@ import {
   ArrowUp, ArrowDown, Minus, ShieldAlert, Award, ShoppingCart, Snowflake, Dices, Coins, Gift, Trash2, ListTodo, RefreshCw, Hourglass, Sword, Shield,
   Swords, Egg, Heart, Utensils, Bath, Gamepad2, PackageOpen, Hammer, Sun, Moon, Ticket, Globe, Skull, Info, Flag, Wand2, Ghost, Wind, Loader2, PawPrint, Play, Maximize
 } from 'lucide-react';
+import { auth, db, provider } from './firebase'; // Assumindo que você criou o firebase.js na mesma pasta
+import { signInWithPopup, onAuthStateChanged, signOut } from "firebase/auth";
+import { doc, onSnapshot, setDoc } from "firebase/firestore";
 
 const CustomCheckSquare = (props) => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
@@ -87,7 +90,7 @@ const FocusTimer = ({ endTime }) => {
         return () => clearInterval(int);
     }, [endTime]);
     
-    if (left <= 0) return <span className="text-6xl text-red-500 font-mono font-black">00:00:00</span>;
+    if (left <= 0) return <span className="text-3xl text-red-500 font-mono font-black">00:00:00</span>;
     
     const h = Math.floor(left / 3600000);
     const m = Math.floor((left % 3600000) / 60000);
@@ -106,7 +109,7 @@ const CLASSES = {
 
 const BOTS_NAMES_POOL = ['Lucas', 'Matheus', 'Tiago', 'Pedro', 'João', 'Miguel', 'Arthur', 'Gael', 'Heitor', 'Theo', 'Davi', 'Gabriel', 'Bernardo', 'Samuel', 'Enzo', 'Alice', 'Laura', 'Julia', 'Sophia', 'Isabella', 'Helena', 'Valentina', 'Sofia', 'Manuela', 'Vitória'];
 const BOTS_TITLES_POOL = ['Analista de Dados', 'Curador Medicinal', 'Arquiteto Solar', 'Estrategista', 'Gerente de Eventos', 'a Valquíria', 'o Alquimista', 'a Maga', 'o Especialista', 'a Viajante', 'o Explorador', 'a Caçadora', 'o Guardião', 'a Campeã', 'a Lenda', 'a Visionária'];
-const BOT_EMOJIS = ['🧝‍♀️', '🧛‍♂️', '🧟', '🧚‍♀️', '🧜‍♂️', '🧞‍♂️', '👽', '🤖', '🦸‍♂️', '🦹‍♀️', '🧙‍♂️', '🥷', '🧑‍🌾', '👷', '👩‍🍳', '🕵️'];
+const BOT_EMOJIS = ['🎃', '🕸️', '🧟', '☄️', '🪼', '🦎', '👽', '🤖', '🐸', '👾', '🤡', '⚡', '🌞', '👺', '💎', '💀','🐞','👻','🦋','🔥'];
 const BOT_PETS = ['bat', 'penguin', 'eagle', 'parrot', 'phoenix', 'dragon'];
 const BOT_CLASS_KEYS = ['acrobat', 'fighter', 'illusionist', 'thief'];
 
@@ -205,58 +208,33 @@ const formatTimeLeft = (deadlineMs) => {
 
 // --- APLICATIVO PRINCIPAL ---
 export default function App() {
+  // 1. Estados de Autenticação
+  const [currentUser, setCurrentUser] = useState(null);
+  const [isLoadingAuth, setIsLoadingAuth] = useState(true);
+  const [isDataLoaded, setIsDataLoaded] = useState(false); // Para não renderizar o app antes de baixar os dados
+  const [isGuestMode, setIsGuestMode] = useState (() => localStorage.getItem('fq_is_guest') === 'true');
+
+  // 2. Estados de UI
   const [activeTab, setActiveTab] = useState('tasks');
   const [rankingView, setRankingView] = useState('ranking'); 
+  const [isDarkMode, setIsDarkMode] = useState(true); // Deixamos o dark mode por padrão
   
-  // --- LOCAL STORAGE STATES E ONBOARDING ---
-  const [isDarkMode, setIsDarkMode] = useState(() => { const saved = localStorage.getItem('fq_theme'); return saved !== null ? JSON.parse(saved) : true; });
-  
-  const [user, setUser] = useState(() => {
-    const saved = localStorage.getItem('fq_user'); 
-    const parsed = saved ? JSON.parse(saved) : null;
-    
-    if (parsed) {
-        if (!parsed.duelStats) parsed.duelStats = { wins: 0, losses: 0, ties: 0 };
-        if (parsed.vouchers === undefined) parsed.vouchers = 0;
-        if (parsed.petBuffBonus === undefined) parsed.petBuffBonus = 0;
-        if (!parsed.dailyTaskLimits) parsed.dailyTaskLimits = { p1: 0, p2: 0 };
-        if (!parsed.dailyGainedXp) parsed.dailyGainedXp = 0;
-        if (!parsed.dailyGainedCoins) parsed.dailyGainedCoins = 0;
-        if (!parsed.dailyGainedVouchers) parsed.dailyGainedVouchers = 0;
-        if (!parsed.records) parsed.records = { maxXp: 0, maxCoins: 0 };
-        if (parsed.urgencyCountThisMonth === undefined) parsed.urgencyCountThisMonth = 0;
-        if (parsed.hasSeenUrgencyInfo === undefined) parsed.hasSeenUrgencyInfo = false;
-        if (parsed.dailyChallengeUsed === undefined) parsed.dailyChallengeUsed = false;
-        if (parsed.hasBonusTaskAvailable === undefined) parsed.hasBonusTaskAvailable = false;
-        if (parsed.activeDuel === undefined) parsed.activeDuel = null;
-        if (parsed.tasksTowardsLootbox === undefined) parsed.tasksTowardsLootbox = 0;
-        
-        if (parsed.hasCompletedOnboarding === undefined || !parsed.userClass) {
-            parsed.hasCompletedOnboarding = false;
-            parsed.userClass = { type: 'acrobat', level: 1, xp: 0 };
-            parsed.debugMode = false;
-        }
-        return parsed;
-    }
-    return {
-      name: '', level: 1, xp: 0, monthlyXp: 0, coins: 0, vouchers: 0, lastMonthlyXp: 0, streak: 0, maxStreakThisMonth: 0, monthDaysElapsed: 0, isUser: true, medals: [],
-      activeBuffs: { realizador: false, resguardo: false, criticalUsedToday: false, petBuffUsedToday: false, duelWin: false, duelLoss: false, lastGasp: false },
-      dailyTaskLimits: { p1: 0, p2: 0 }, inventory: { food: 5, soap: 5, toys: 5 }, pet: null, petBuffBonus: 0, tasksTowardsLootbox: 0, dailyChallengedBots: {}, duelStats: { wins: 0, losses: 0, ties: 0 },
-      dailyGainedXp: 0, dailyGainedCoins: 0, dailyGainedVouchers: 0, records: { maxXp: 0, maxCoins: 0 }, urgencyCountThisMonth: 0, hasSeenUrgencyInfo: false,
-      hasCompletedOnboarding: false, userClass: { type: 'acrobat', level: 1, xp: 0 }, debugMode: false, dailyChallengeUsed: false, hasBonusTaskAvailable: false, activeDuel: null
-    };
-  });
-
-  const [currentDate, setCurrentDate] = useState(() => { const saved = localStorage.getItem('fq_date'); return saved ? new Date(saved) : new Date(); });
-  const [bots, setBots] = useState(() => { const saved = localStorage.getItem('fq_bots'); return saved ? JSON.parse(saved) : generateFakeUsers(true); });
-  const [globalFeed, setGlobalFeed] = useState(() => { const saved = localStorage.getItem('fq_feed'); return saved ? JSON.parse(saved) : []; });
-  const [monthlyStats, setMonthlyStats] = useState(() => { const saved = localStorage.getItem('fq_mstats'); return saved ? JSON.parse(saved) : { tasks: 0, habits: 0 }; });
-  const [folders, setFolders] = useState(() => { const saved = localStorage.getItem('fq_folders'); return saved ? JSON.parse(saved) : ['Geral', 'Trabalho', 'Estudos']; });
-  const [tasks, setTasks] = useState(() => { const saved = localStorage.getItem('fq_tasks'); return saved ? JSON.parse(saved) : []; });
-  const [habits, setHabits] = useState(() => { const saved = localStorage.getItem('fq_habits'); return saved ? JSON.parse(saved) : []; });
-  const [sprints, setSprints] = useState(() => { const saved = localStorage.getItem('fq_sprints'); return saved ? JSON.parse(saved) : []; });
+  // 3. Estados dos Dados (Iniciam vazios/nulos)
+  const [user, setUser] = useState(null);
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [bots, setBots] = useState([]);
+  const [globalFeed, setGlobalFeed] = useState([]);
+  const [monthlyStats, setMonthlyStats] = useState({ tasks: 0, habits: 0 });
+  const [folders, setFolders] = useState(['Geral', 'Trabalho', 'Estudos']);
+  const [tasks, setTasks] = useState([]);
+  const [habits, setHabits] = useState([]);
+  const [sprints, setSprints] = useState([]);
   const [collapsedSprints, setCollapsedSprints] = useState([]);
 
+  // REMOVA TODOS os useEffects antigos que faziam localStorage.setItem() 
+  // (aqueles 10 useEffects seguidos logo abaixo da declaração dos estados)
+
+  /*
   useEffect(() => { localStorage.setItem('fq_theme', JSON.stringify(isDarkMode)); }, [isDarkMode]);
   useEffect(() => { localStorage.setItem('fq_user', JSON.stringify(user)); }, [user]);
   useEffect(() => { localStorage.setItem('fq_date', currentDate.toISOString()); }, [currentDate]);
@@ -267,6 +245,100 @@ export default function App() {
   useEffect(() => { localStorage.setItem('fq_tasks', JSON.stringify(tasks)); }, [tasks]);
   useEffect(() => { localStorage.setItem('fq_habits', JSON.stringify(habits)); }, [habits]);
   useEffect(() => { localStorage.setItem('fq_sprints', JSON.stringify(sprints)); }, [sprints]);
+  */
+
+// --- 1. MONITORAR LOGIN ---
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (authUser) => {
+      setCurrentUser(authUser);
+      setIsLoadingAuth(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    // SE FOR VISITANTE (Lê do LocalStorage)
+    if (isGuestMode) {
+      const savedData = localStorage.getItem('fq_guest_data');
+      if (savedData) {
+        const data = JSON.parse(savedData);
+        setUser(data.user);
+        setTasks(data.tasks || []);
+        setHabits(data.habits || []);
+        setSprints(data.sprints || []);
+        setBots(data.bots || generateFakeUsers(true));
+        setGlobalFeed(data.globalFeed || []);
+        setMonthlyStats(data.monthlyStats || { tasks: 0, habits: 0 });
+        setFolders(data.folders || ['Geral', 'Trabalho', 'Estudos']);
+        if (data.currentDate) setCurrentDate(new Date(data.currentDate));
+        setIsDarkMode(data.isDarkMode !== undefined ? data.isDarkMode : true);
+      } else {
+        // Visitante novo
+        setUser({
+           name: 'Visitante', level: 1, xp: 0, monthlyXp: 0, coins: 0, vouchers: 0, lastMonthlyXp: 0, streak: 0, maxStreakThisMonth: 0, monthDaysElapsed: 0, isUser: true, medals: [],
+           activeBuffs: { realizador: false, resguardo: false, criticalUsedToday: false, petBuffUsedToday: false, duelWin: false, duelLoss: false, lastGasp: false },
+           dailyTaskLimits: { p1: 0, p2: 0 }, inventory: { food: 5, soap: 5, toys: 5 }, pet: null, petBuffBonus: 0, tasksTowardsLootbox: 0, dailyChallengedBots: {}, duelStats: { wins: 0, losses: 0, ties: 0 },
+           dailyGainedXp: 0, dailyGainedCoins: 0, dailyGainedVouchers: 0, records: { maxXp: 0, maxCoins: 0 }, urgencyCountThisMonth: 0, hasSeenUrgencyInfo: false,
+           hasCompletedOnboarding: false, userClass: { type: 'acrobat', level: 1, xp: 0 }, debugMode: false, dailyChallengeUsed: false, hasBonusTaskAvailable: false, activeDuel: null
+        });
+        setBots(generateFakeUsers(true));
+      }
+      setIsDataLoaded(true);
+      return;
+    }
+
+    // SE NÃO FOR VISITANTE E ESTIVER LOGADO (Lê do Firebase)
+    if (!currentUser) return;
+    const docRef = doc(db, "usersData", currentUser.uid);
+    const unsubscribe = onSnapshot(docRef, (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setUser(data.user);
+        setTasks(data.tasks || []);
+        setHabits(data.habits || []);
+        setSprints(data.sprints || []);
+        setBots(data.bots || generateFakeUsers(true));
+        setGlobalFeed(data.globalFeed || []);
+        setMonthlyStats(data.monthlyStats || { tasks: 0, habits: 0 });
+        setFolders(data.folders || ['Geral', 'Trabalho', 'Estudos']);
+        if (data.currentDate) setCurrentDate(new Date(data.currentDate));
+        setIsDarkMode(data.isDarkMode !== undefined ? data.isDarkMode : true);
+        setIsDataLoaded(true);
+      } else {
+        // Usuário do Google novo
+        const initialUserData = {
+           name: currentUser.displayName || '', level: 1, xp: 0, monthlyXp: 0, coins: 0, vouchers: 0, lastMonthlyXp: 0, streak: 0, maxStreakThisMonth: 0, monthDaysElapsed: 0, isUser: true, medals: [],
+           activeBuffs: { realizador: false, resguardo: false, criticalUsedToday: false, petBuffUsedToday: false, duelWin: false, duelLoss: false, lastGasp: false },
+           dailyTaskLimits: { p1: 0, p2: 0 }, inventory: { food: 5, soap: 5, toys: 5 }, pet: null, petBuffBonus: 0, tasksTowardsLootbox: 0, dailyChallengedBots: {}, duelStats: { wins: 0, losses: 0, ties: 0 },
+           dailyGainedXp: 0, dailyGainedCoins: 0, dailyGainedVouchers: 0, records: { maxXp: 0, maxCoins: 0 }, urgencyCountThisMonth: 0, hasSeenUrgencyInfo: false,
+           hasCompletedOnboarding: false, userClass: { type: 'acrobat', level: 1, xp: 0 }, debugMode: false, dailyChallengeUsed: false, hasBonusTaskAvailable: false, activeDuel: null
+        };
+        setDoc(docRef, {
+          user: initialUserData, tasks: [], habits: [], sprints: [], bots: generateFakeUsers(true), globalFeed: [],
+          monthlyStats: { tasks: 0, habits: 0 }, folders: ['Geral', 'Trabalho', 'Estudos'],
+          currentDate: new Date().toISOString(), isDarkMode: true
+        });
+      }
+    });
+
+    return () => unsubscribe();
+  }, [currentUser, isGuestMode]);
+
+  // --- 3. SALVAR DADOS NO FIREBASE ---
+  // Sempre que houver alguma alteração nestes estados, manda para a nuvem!
+  useEffect(() => {
+    if (!isDataLoaded || !user) return; // Garante que não subscreve com null
+    
+    const dataToSave = {
+      user, tasks, habits, sprints, bots, globalFeed, monthlyStats, folders, currentDate: currentDate.toISOString(), isDarkMode
+    };
+
+    if (isGuestMode) {
+      localStorage.setItem('fq_guest_data', JSON.stringify(dataToSave));
+    } else if (currentUser) {
+      setDoc(doc(db, "usersData", currentUser.uid), dataToSave, { merge: true });
+    }
+  }, [user, tasks, habits, sprints, bots, globalFeed, monthlyStats, folders, currentDate, isDarkMode, currentUser, isDataLoaded, isGuestMode]);
 
   // --- CONTROLO DA MEIA-NOITE E URGÊNCIA ---
   const [tick, setTick] = useState(0);
@@ -279,7 +351,7 @@ export default function App() {
   
   // Onboarding States
   const [onboardingStep, setOnboardingStep] = useState(0);
-  const [onboardingName, setOnboardingName] = useState(user.name || '');
+  const [onboardingName, setOnboardingName] = useState(user?.name || '');
   const [onboardingClass, setOnboardingClass] = useState('acrobat');
   const [onboardingDebug, setOnboardingDebug] = useState(false);
   const [isLeavingOnboarding, setIsLeavingOnboarding] = useState(false);
@@ -288,20 +360,20 @@ export default function App() {
 
   // Inicialização/Check de Data no Mount
   useEffect(() => {
-      if (!user.hasCompletedOnboarding) return;
+      if (!user?.hasCompletedOnboarding || user?.debugMode) return;
       const today = new Date();
       const saved = new Date(currentDate);
       if (today.getDate() !== saved.getDate() || today.getMonth() !== saved.getMonth() || today.getFullYear() !== saved.getFullYear()) {
           setForceAdvanceModal(true);
       }
-  }, [user.hasCompletedOnboarding]);
+  }, [user?.hasCompletedOnboarding, user?.debugMode, currentDate]);
 
   useEffect(() => {
-     if (!user.hasCompletedOnboarding) return; 
+     if (!user?.hasCompletedOnboarding) return; 
      const intervalId = setInterval(() => {
          const now = new Date(); const nowMs = now.getTime(); setTick(t => t + 1);
          const saved = new Date(currentDate);
-         if (now.getDate() !== saved.getDate() || now.getMonth() !== saved.getMonth()) { setForceAdvanceModal(true); }
+         if (!user?.debugMode && (now.getDate() !== saved.getDate() || now.getMonth() !== saved.getMonth())) { setForceAdvanceModal(true); }
          
          let penaltyTaskTitle = null;
          setTasks(currentTasks => {
@@ -320,7 +392,7 @@ export default function App() {
          });
      }, 5000); 
      return () => clearInterval(intervalId);
-  }, [currentDate, tasks, user.hasCompletedOnboarding]);
+  }, [currentDate, tasks, user?.hasCompletedOnboarding, user?.debugMode]);
 
   const theme = {
     bg: isDarkMode ? 'bg-zinc-900' : 'bg-zinc-50', panel: isDarkMode ? 'bg-zinc-800' : 'bg-white', inner: isDarkMode ? 'bg-zinc-950' : 'bg-zinc-100',
@@ -332,7 +404,7 @@ export default function App() {
 
   // --- ESTADOS DE UI E MODAIS ---
   const [coinAnim, setCoinAnim] = useState(null);
-  const prevCoinsRef = useRef(user.coins);
+  const prevCoinsRef = useRef(user?.coins);
   const [showWelcome, setShowWelcome] = useState(false);
   const [showMonthlyReset, setShowMonthlyReset] = useState(false);
   const [levelModal, setLevelModal] = useState(null);
@@ -361,8 +433,10 @@ export default function App() {
   const [expandedBot, setExpandedBot] = useState(null);
   const [epicCritModal, setEpicCritModal] = useState(null);
   const [debugPetSelect, setDebugPetSelect] = useState('bat');
+  const [debugHabitStreak, setDebugHabitStreak] = useState(10);
   const [diceSlotActive, setDiceSlotActive] = useState(false);
   const [slotDisplay, setSlotDisplay] = useState({ roll: 1, title: '' });
+  const [monthlySummaryModal, setMonthlySummaryModal] = useState(null);
 
   const [activeFolder, setActiveFolder] = useState('Todas');
   const [isAddingFolder, setIsAddingFolder] = useState(false);
@@ -390,14 +464,14 @@ export default function App() {
   const [newHabitType, setNewHabitType] = useState('single');
   const [newHabitTarget, setNewHabitTarget] = useState(3);
 
-  const p1LimitReached = (user.dailyTaskLimits?.p1 || 0) >= 2;
-  const p2LimitReached = (user.dailyTaskLimits?.p2 || 0) >= 3;
+  const p1LimitReached = (user?.dailyTaskLimits?.p1 || 0) >= 2;
+  const p2LimitReached = (user?.dailyTaskLimits?.p2 || 0) >= 3;
 
   useEffect(() => {
-    if (user.coins > prevCoinsRef.current) { setCoinAnim('up'); setTimeout(() => setCoinAnim(null), 500); } 
-    else if (user.coins < prevCoinsRef.current) { setCoinAnim('down'); setTimeout(() => setCoinAnim(null), 500); }
-    prevCoinsRef.current = user.coins;
-  }, [user.coins]);
+    if (user?.coins > prevCoinsRef.current) { setCoinAnim('up'); setTimeout(() => setCoinAnim(null), 500); } 
+    else if (user?.coins < prevCoinsRef.current) { setCoinAnim('down'); setTimeout(() => setCoinAnim(null), 500); }
+    prevCoinsRef.current = user?.coins;
+  }, [user?.coins]);
 
   useEffect(() => {
     if (showDatePicker) {
@@ -409,6 +483,15 @@ export default function App() {
         }
     }
   }, [showDatePicker, newTaskDeadline, currentDate]);
+
+  useEffect(() => {
+    if (eggHatchModal && eggHatchModal.step === 'cracking') {
+        const timer = setTimeout(() => {
+            setEggHatchModal(prev => prev ? { ...prev, step: 'reveal' } : null);
+        }, 3000); // Espera 3 segundos e revela o pet
+        return () => clearTimeout(timer);
+    }
+  }, [eggHatchModal]);
 
   // Intervalo global para monitorar Testes de Tempo
   useEffect(() => {
@@ -606,32 +689,76 @@ export default function App() {
   };
 
   const toggleSprintTask = (sprintId, taskId) => {
-     setSprints(prev => prev.map(s => {
-        if (s.id !== sprintId) return s;
-        let justCompletedTask = false;
-        const newTasks = s.tasks.map(t => {
-           if (t.id === taskId) {
-              if (!t.completed) justCompletedTask = true;
-              return { ...t, completed: !t.completed };
-           }
-           return t;
-        });
-        
-        let sprintNowCompleted = newTasks.every(t => t.completed) && !s.completed;
-        if (justCompletedTask) addXpAndCoins(50, 50, 50, 1); 
-        
-        if (sprintNowCompleted) {
-            let rewardXp = 0, rewardCoins = 0;
-            if (s.distance === '5K') { rewardXp = 500; rewardCoins = 500; }
-            if (s.distance === '10K') { rewardXp = 700; rewardCoins = 700; }
-            if (s.distance === '15K') { rewardXp = 1000; rewardCoins = 1000; }
-            if (s.distance === '20K') { rewardXp = 1400; rewardCoins = 1400; }
-            addXpAndCoins(rewardXp, rewardCoins, rewardXp);
-            setUser(u => ({...u, medals: [...u.medals, `sprint_${s.distance.toLowerCase()}`]}));
-            showToast(`🏁 SPRINT ${s.distance} CONCLUÍDA! +${rewardXp} XP`);
-        }
-        return { ...s, tasks: newTasks, completed: sprintNowCompleted || s.completed };
-     }));
+     // 1. Encontramos a sprint e a tarefa primeiro (FORA do setState)
+     const sprint = sprints.find(s => s.id === sprintId);
+     if (!sprint || sprint.completed) return;
+     
+     const task = sprint.tasks.find(t => t.id === taskId);
+     if (!task) return;
+     
+     const justCompletedTask = !task.completed;
+     const newTasks = sprint.tasks.map(t => t.id === taskId ? { ...t, completed: !t.completed } : t);
+     const sprintNowCompleted = newTasks.every(t => t.completed) && !sprint.completed;
+
+     // 2. Atualizamos o estado
+     setSprints(prev => prev.map(s => s.id === sprintId ? { ...s, tasks: newTasks, completed: sprintNowCompleted || s.completed } : s));
+
+     // 3. Aplicamos os Efeitos Colaterais (FORA do setState, evitando a duplicação!)
+     if (justCompletedTask) {
+         addXpAndCoins(50, 50, 50, 1); 
+     }
+     
+     if (sprintNowCompleted) {
+         let rewardXp = 0, rewardCoins = 0;
+         if (sprint.distance === '5K') { rewardXp = 500; rewardCoins = 500; }
+         if (sprint.distance === '10K') { rewardXp = 700; rewardCoins = 700; }
+         if (sprint.distance === '15K') { rewardXp = 1000; rewardCoins = 1000; }
+         if (sprint.distance === '20K') { rewardXp = 1400; rewardCoins = 1400; }
+         
+         addXpAndCoins(rewardXp, rewardCoins, rewardXp);
+         setUser(u => ({...u, medals: [...u.medals, `sprint_${sprint.distance.toLowerCase()}`]}));
+         showToast(`🏁 SPRINT ${sprint.distance} CONCLUÍDA! +${rewardXp} XP`);
+     }
+  };
+
+  // --- NOVA LÓGICA MENSAL CENTRALIZADA ---
+  const triggerMonthlyTurn = (isSimulated = false) => {
+      let newMedal = null;
+      const isPerfectMonth = user.maxStreakThisMonth >= 28;
+      if (isPerfectMonth) newMedal = 'plat';
+      else if (user.maxStreakThisMonth >= 23) newMedal = 'gold';
+      else if (user.maxStreakThisMonth >= 14) newMedal = 'silver';
+      else if (user.maxStreakThisMonth >= 7) newMedal = 'bronze';
+
+      // Computar Pódio antes do Reset
+      const userObj = { ...user, id: 'me' };
+      const currentRanking = [...bots, userObj].sort((a, b) => b.monthlyXp - a.monthlyXp);
+      const top3 = currentRanking.slice(0, 3);
+      const userMonthlyXp = user.monthlyXp;
+
+      // Ativar o Modal Mensal
+      setMonthlySummaryModal({
+          medal: newMedal,
+          xp: userMonthlyXp,
+          top3: top3,
+          monthName: MONTH_NAMES[currentDate.getMonth()]
+      });
+
+      // Aplicar Reset
+      setUser(prev => ({ 
+          ...prev, 
+          medals: newMedal ? [...prev.medals, newMedal] : prev.medals,
+          maxStreakThisMonth: 0, monthDaysElapsed: 0, monthlyXp: 0, lastMonthlyXp: 0, phoenixUsedThisMonth: false, dailyChallengedBots: {}, urgencyCountThisMonth: 0 
+      }));
+
+      setHabits(cur => cur.map(h => ({ ...h, streak: 0, current: 0, completed: false, frozen: false })));
+      setBots(cur => cur.map(b => ({ ...b, monthlyXp: 0, lastMonthlyXp: 0 })));
+      
+      if (isSimulated) {
+          const nextMonthDate = new Date(currentDate);
+          nextMonthDate.setMonth(nextMonthDate.getMonth() + 1);
+          setCurrentDate(nextMonthDate);
+      }
   };
 
   const tryPetBuff = (baseXP, baseCoins, task) => {
@@ -862,7 +989,12 @@ export default function App() {
               let possiblePets = ['bat', 'penguin', 'eagle', 'parrot'];
               if (prev.level >= 30 && Math.random() < 0.25) possiblePets = Math.random() > 0.5 ? ['phoenix'] : ['dragon'];
               const hatchedType = possiblePets[Math.floor(Math.random() * possiblePets.length)];
-              setEggHatchModal({ type: hatchedType, step: 'cracking' });
+              
+              // Pequeno atraso para evitar conflitos de renderização no React
+              setTimeout(() => {
+                 setEggHatchModal({ type: hatchedType, step: 'cracking' });
+              }, 0);
+              
               return { ...prev, pet: { type: 'egg', strikes: newStrikes } }; 
            }
            return { ...prev, pet: { type: 'egg', strikes: newStrikes } };
@@ -1151,6 +1283,10 @@ export default function App() {
         const nextDate = new Date(currentDate);
         nextDate.setDate(nextDate.getDate() + 1);
         setCurrentDate(nextDate);
+
+        if (nextDate.getMonth() !== currentDate.getMonth()) {
+            triggerMonthlyTurn(false);
+        }
         
         let newFeed = [];
 
@@ -1343,6 +1479,7 @@ export default function App() {
   };
 
   const simulateNextMonth = () => {
+    triggerMonthlyTurn(true);
     let newMedal = null;
     const isPerfectMonth = user.maxStreakThisMonth >= 28;
     if (isPerfectMonth) newMedal = 'plat';
@@ -1357,6 +1494,12 @@ export default function App() {
     setUser(prev => ({ ...prev, maxStreakThisMonth: 0, monthDaysElapsed: 0, monthlyXp: 0, lastMonthlyXp: 0, phoenixUsedThisMonth: false, dailyChallengedBots: {}, urgencyCountThisMonth: 0 }));
     setBots(cur => cur.map(b => ({ ...b, monthlyXp: 0, lastMonthlyXp: 0 })));
     
+    // --- ADICIONADO: Avançar a data real em 1 mês ---
+    const nextMonthDate = new Date(currentDate);
+    nextMonthDate.setMonth(nextMonthDate.getMonth() + 1);
+    setCurrentDate(nextMonthDate);
+    
+    showToast("Mês avançado! Estatísticas reiniciadas.");
     setShowMonthlyReset(true); 
   };
 
@@ -1382,6 +1525,87 @@ export default function App() {
   const handleMinuteSelect = (mStr) => { const hrs = newTaskTime ? newTaskTime.split(':')[0] : '12'; setNewTaskTime(`${hrs}:${mStr}`); };
 
   // --- RENDERIZAÇÃO DE TELAS ---
+
+  // TELA DE CARREGAMENTO DO LOGIN
+  if (isLoadingAuth && !isGuestMode) {
+    return (
+      <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center text-emerald-500">
+        <Loader2 size={64} className="animate-spin mb-4" />
+        <p className="font-bold tracking-widest uppercase">Conectando ao servidor...</p>
+      </div>
+    );
+  }
+
+  // TELA DE LOGIN (Se não houver usuário)
+  if (!currentUser && !isGuestMode) {
+    return (
+      <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center p-6 relative overflow-hidden">
+         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-emerald-900/20 to-zinc-950"></div>
+         
+         <div className="relative z-10 w-full max-w-sm flex flex-col items-center animate-in fade-in zoom-in duration-700">
+            <div className="w-24 h-24 bg-emerald-500/20 border border-emerald-500 rounded-full flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(16,185,129,0.3)]">
+               <CheckCircle size={48} className="text-emerald-500" />
+            </div>
+            
+            <h1 className="text-4xl font-black text-white mb-2">Focus<span className="text-zinc-500">Quest</span></h1>
+            <p className="text-zinc-400 text-center mb-10">A sua jornada em múltiplos dispositivos começa aqui.</p>
+            
+            {/* Login com o Google */}
+            <button 
+               onClick={() => signInWithPopup(auth, provider)} 
+               className="w-full bg-white text-black font-black py-4 rounded-xl flex items-center justify-center gap-3 transition-transform hover:scale-105 shadow-lg"
+            >
+               <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-6 h-6" />
+               Entrar com o Google
+            </button>
+
+            {/* Opção Visitante (LocalStorage) */}
+            <div className="mt-8 pt-8 border-t border-zinc-800 w-full text-center">
+               <p className="text-xs text-zinc-500 mb-4 leading-relaxed px-4">
+                  Não quer vincular uma conta? Jogue como Visitante. 
+                  <strong className="text-zinc-400 block mt-1">Atenção: O seu progresso ficará salvo apenas neste navegador.</strong>
+               </p>
+               <button 
+                  onClick={() => {
+                     setIsGuestMode(true);
+                     localStorage.setItem('fq_is_guest', 'true');
+                  }} 
+                  className="w-full bg-zinc-800 text-white font-bold py-3.5 rounded-xl border border-zinc-700 hover:bg-zinc-700 transition-colors"
+               >
+                  Jogar como Visitante
+               </button>
+            </div>
+         </div>
+      </div>
+    );
+  }
+
+  // TELA DE CARREGAMENTO DE DADOS (Evita erros de null pointer antes do onSnapshot disparar)
+  if (!isDataLoaded || !user) {
+    return (
+      <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center text-emerald-500">
+        <Loader2 size={64} className="animate-spin mb-4" />
+        <p className="font-bold tracking-widest uppercase">Baixando seu progresso...</p>
+      </div>
+    );
+  }
+
+  // LOGOUT BUTTON (Opcional, mas útil colocar no header)
+  const handleLogout = () => {
+    if (isGuestMode) {
+      // Se for visitante, apenas desligamos o modo visitante (os dados ficam guardados no localStorage para a próxima vez que ele clicar em visitante)
+      setIsGuestMode(false);
+      localStorage.removeItem('fq_is_guest');
+      setUser(null);
+      setIsDataLoaded(false);
+    } else {
+      // Se for do Google, fazemos o sign out real do Firebase
+      signOut(auth);
+      setUser(null);
+      setIsDataLoaded(false);
+    }
+  };
+
   if (!user.hasCompletedOnboarding) {
     return (
         <div className={`fixed inset-0 bg-zinc-950 text-white z-[5000] flex flex-col justify-center items-center p-6 transition-all duration-500 ${isLeavingOnboarding ? 'opacity-0' : 'opacity-100'}`}>
@@ -2152,6 +2376,28 @@ export default function App() {
             <button onClick={() => { localStorage.clear(); window.location.reload(); }} className="w-full bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-500 py-2 px-3 rounded-lg text-sm border border-red-500/30 whitespace-nowrap flex items-center justify-center gap-1 mt-2">
               Resetar Save (Apagar Tudo)
             </button>
+            {/* Debug do Habit Streak */}
+            <div className="w-full flex gap-2 items-center mt-2">
+               <input 
+                  type="number" 
+                  value={debugHabitStreak} 
+                  onChange={e => setDebugHabitStreak(Number(e.target.value))} 
+                  className={`w-20 ${theme.inner} border ${theme.border} rounded-lg px-2 text-sm py-2 focus:outline-none`} 
+                  min="0"
+               />
+               <button onClick={() => {
+                   setHabits(cur => cur.map(h => ({ ...h, streak: debugHabitStreak })));
+                   // Agora também definimos a ofensiva global do utilizador para que conte para a medalha mensal!
+                   setUser(prev => ({ 
+                       ...prev, 
+                       streak: debugHabitStreak, 
+                       maxStreakThisMonth: Math.max(prev.maxStreakThisMonth || 0, debugHabitStreak) 
+                   }));
+                   showToast(`Streak Global e dos Hábitos definido para ${debugHabitStreak}!`);
+               }} className={`flex-1 bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-500 py-2 px-3 rounded-lg text-sm border border-blue-500/30 whitespace-nowrap`}>
+                 Definir Streak Hábitos
+               </button>
+            </div>
           </div>
         </div>
       )}
@@ -2285,6 +2531,16 @@ export default function App() {
             Focus<span className={theme.textMuted}>Quest</span>
           </h1>
           <div className="flex items-center gap-3">
+
+            {/* NOVO BOTÃO DE LOGOUT */}
+            <button 
+               onClick={handleLogout} 
+               className="text-[10px] uppercase font-bold text-red-500 hover:text-red-400 px-2 py-1 rounded border border-red-500/30 bg-red-500/10 transition-colors"
+            >
+               Sair
+            </button>
+
+            {/* Restantes botões que já lá estavam */}
             {isUrgentActive && !user.hasSeenUrgencyInfo && (
                 <button onClick={() => { setUrgencyInfoModal(true); setUser(p => ({...p, hasSeenUrgencyInfo: true})); }} className="animate-pulse text-red-500 hover:scale-110 transition-transform">
                    <Info size={20} />
@@ -2612,6 +2868,73 @@ export default function App() {
                </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* MODAL: RESUMO DO MÊS */}
+      {monthlySummaryModal && (
+        <div className={`fixed inset-0 ${theme.modalBg} z-[600] flex flex-col justify-center items-center p-6 backdrop-blur-md animate-in fade-in duration-500`}>
+           <div className={`${theme.panel} border ${theme.border} p-8 rounded-3xl w-full max-w-md shadow-[0_0_50px_rgba(16,185,129,0.2)] relative overflow-hidden animate-modal-pop`}>
+              <div className="absolute top-0 right-0 p-4 opacity-5"><Trophy size={120}/></div>
+              
+              <h2 className={`text-3xl font-black ${theme.text} mb-1 uppercase tracking-wider text-center`}>Resumo de {monthlySummaryModal.monthName}</h2>
+              <p className={`text-sm ${theme.textMuted} mb-6 text-center`}>Mais um ciclo concluído na sua jornada.</p>
+              
+              <div className="flex flex-col items-center mb-8">
+                 <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4">A sua Recompensa de Constância</h3>
+                 {monthlySummaryModal.medal ? (
+                    <div className={`w-20 h-20 rounded-full ${MEDAL_STYLES[monthlySummaryModal.medal]} flex items-center justify-center shadow-xl animate-bounce relative`}>
+                        <Award size={40} className="text-white drop-shadow-md"/>
+                        <span className="absolute -bottom-2 bg-zinc-800 text-white text-[10px] px-2 py-0.5 rounded-full border border-zinc-600 uppercase font-bold">
+                            {monthlySummaryModal.medal === 'plat' ? 'Platina' : monthlySummaryModal.medal === 'gold' ? 'Ouro' : monthlySummaryModal.medal === 'silver' ? 'Prata' : 'Bronze'}
+                        </span>
+                    </div>
+                 ) : (
+                    <div className="w-20 h-20 rounded-full bg-zinc-800/50 border border-zinc-700 border-dashed flex items-center justify-center">
+                        <span className="text-zinc-500 text-[10px] uppercase font-bold text-center px-2">Sem Medalha</span>
+                    </div>
+                 )}
+                 <p className={`text-sm ${theme.text} mt-4 font-medium`}>XP Mensal: <span className="text-emerald-500 font-black">{monthlySummaryModal.xp}</span></p>
+              </div>
+
+              <div className={`bg-black/10 dark:bg-black/30 rounded-2xl p-4 border ${theme.border} mb-8`}>
+                 <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-3 text-center">Pódio Mensal</h3>
+                 <div className="flex justify-center items-end gap-2 h-32">
+                    {/* Segundo Lugar */}
+                    {monthlySummaryModal.top3[1] && (
+                        <div className="flex flex-col items-center w-1/3">
+                            <span className="text-sm mb-1 text-center truncate w-full px-1">{monthlySummaryModal.top3[1].isUser ? 'Você' : monthlySummaryModal.top3[1].name}</span>
+                            <div className="w-full bg-slate-300 dark:bg-slate-700 h-16 rounded-t-lg flex flex-col items-center justify-start pt-2 border-t-2 border-slate-400">
+                               <span className="text-slate-600 dark:text-slate-300 font-black">2º</span>
+                               <span className="text-[9px] text-slate-500 dark:text-slate-400">{monthlySummaryModal.top3[1].monthlyXp} XP</span>
+                            </div>
+                        </div>
+                    )}
+                    {/* Primeiro Lugar */}
+                    {monthlySummaryModal.top3[0] && (
+                        <div className="flex flex-col items-center w-1/3">
+                            <span className="text-sm mb-1 font-bold text-yellow-600 dark:text-yellow-500 text-center truncate w-full px-1">{monthlySummaryModal.top3[0].isUser ? 'Você' : monthlySummaryModal.top3[0].name}</span>
+                            <div className="w-full bg-yellow-300 dark:bg-yellow-600 h-24 rounded-t-lg flex flex-col items-center justify-start pt-2 border-t-2 border-yellow-400 shadow-[0_-5px_15px_rgba(234,179,8,0.3)] z-10">
+                               <span className="text-yellow-700 dark:text-yellow-300 font-black">1º</span>
+                               <span className="text-[9px] text-yellow-600 dark:text-yellow-400">{monthlySummaryModal.top3[0].monthlyXp} XP</span>
+                            </div>
+                        </div>
+                    )}
+                    {/* Terceiro Lugar */}
+                    {monthlySummaryModal.top3[2] && (
+                        <div className="flex flex-col items-center w-1/3">
+                            <span className="text-sm mb-1 text-center truncate w-full px-1">{monthlySummaryModal.top3[2].isUser ? 'Você' : monthlySummaryModal.top3[2].name}</span>
+                            <div className="w-full bg-orange-300 dark:bg-orange-800 h-12 rounded-t-lg flex flex-col items-center justify-start pt-2 border-t-2 border-orange-400">
+                               <span className="text-orange-700 dark:text-orange-400 font-black">3º</span>
+                               <span className="text-[9px] text-orange-600 dark:text-orange-500">{monthlySummaryModal.top3[2].monthlyXp} XP</span>
+                            </div>
+                        </div>
+                    )}
+                 </div>
+              </div>
+
+              <button onClick={() => setMonthlySummaryModal(null)} className={`w-full ${theme.btnPrimary} font-bold py-4 rounded-xl transition-transform hover:scale-105`}>Avançar para o Próximo Mês</button>
+           </div>
         </div>
       )}
 
